@@ -1,0 +1,5 @@
+filename,search
+search1.csv,"NK"[All Fields] AND "T"[All Fields] AND "Orbit"[All Fields]
+search2.csv,"Natural"[All Fields] AND "Killer"[All Fields] AND "T"[All Fields] AND "ocular"[All Fields]
+search3.csv,"Natural Killer"[All Fields] AND "T"[All Fields] AND "Orbit"[All Fields]
+search4.csv,"Natural Killer"[All Fields] AND "T"[All Fields] AND "Lymphoma"[All Fields] AND "Orbit"[All Fields]
