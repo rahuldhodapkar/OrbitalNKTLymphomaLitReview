@@ -9,7 +9,7 @@ Literature review of NK/T cell lymphoma involving the orbit and adnexa
 
 ## Exclusion Criteria
 
-- Did not have full description of patient age, sex, and particular orbital invovement
+- Did not have per-patient reporting of age, sex, and particular orbital invovement
 - Did not have description of treatment
 - Did not have description of outcome
 

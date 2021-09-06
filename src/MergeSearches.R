@@ -8,6 +8,13 @@
 library(stringr)
 library(hashmap)
 
+######## Create output scaffolding
+ifelse(!dir.exists("./calc"), dir.create("./calc"), FALSE)
+
+#################################################
+## LOAD DATA
+#################################################
+
 search.metadata <- read.csv2('./data/search_metadata.csv', quote='', sep=',')
 
 search.data <- NULL

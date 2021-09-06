@@ -1,67 +1,67 @@
-"PMID","Age","Sex","Ethnicity","Presenting Symptoms","Treatment","Survival From Diagnosis (mo)","Outcome"
-10571346,66,"F","Caucasian","lid swelling; proptosis; diplopia","Localized RT",4,"Death"
-10571346,67,"F","Asian","decreased vision; restricted EOM","Localized RT; TAD CT",1,"Death"
-25811726,57,"M",,"lid swelling; chemosis; conjunctival mass","Localized RT; cyclophosphamide vincristine hydroxydaunorubicin cisplatin prednisone CT",11,"PR"
-26585973,66,"F",,"blurred vision with vitreous opacity","Localized RT; SMILE CT",">24","CR"
-22681504,22,"F",,"lid swelling; restricted EOM; decreased vision; hyperglobus; chemosis","Localized RT; CHOP CT",3,"Death"
-23387455,52,"M",,"decreased vision; RAPD; elevated IOP; proptosis; restricted EOM; diplopia; periorbital edema; chemosis; fatigue; weight loss","Localized RT; methotrexate/cytarabine L-asparaginase CT",5,"Death"
-23969921,41,"F",,"lid swelling; facial swelling; necrotizing ulcerative periodontitis","CT",3,"Death"
-29978138,73,"F",,"blurred vision; lid swelling; anterior uveitis; increased IOP; conjunctival injection and chemosis","Localized RT; 2/3DeVIC CT",">14","CR"
-12673566,81,"M","Asian","blurred vision with vitreous opacity; proptosis","Localized RT",4,"Death"
-23663138,39,"F",,"dacryoadenitis, chronic rhinosinusitis","cyclophosphamide vincristine adriamycin prenisolone intrathecal methotrexate CT",2,"Death"
-28194321,56,"M",,"decreased vision; eye redness; periorbital edema; chemosis; restricted EOM","SMILE CT",2,"Death"
-24621697,58,"F","Asian","periorbital swelling; periorbital pain","dexamethasone ifosfamide etoposide CT",">12","PR"
-28146362,28,"F","Caucasian","epiphora","Localized RT; GPD CT; SMILE CT",12,"Death"
-18347456,53,"M",,"periorbital swelling; diplopia; restricted EOM","Localized RT; intrathecal cytarabine doxorubicin vincristine cyclophosphamide",13,"Death"
-32874983,3,"M",,"fever; proptosis; cervical lymphadenopathy; lid swelling; periorbital redness","SMILE CT",">24","CR"
-17440279,41,"M",,"proptosis; lid swelling; ptosis; fixation of the globe; decreased vision","RT; CT; Surgical management",6,"Death"
-17440279,50,"M",,"proptosis; lid swelling; ptosis; fixation of the globe; decreased vision","RT; CT; Surgical management",5,"Death"
-17440279,46,"M",,"lid swelling; lid ulceration; decreased vision; restricted EOM","RT; CT; Surgical management",14,"Death"
-17440279,61,"M",,"inner canthus swelling; cavity formation; proptosis; globe fixation; decreased vision","RT; CT; Surgical management",12,"Death"
-17440279,16,"M",,"inner canthus swelling and ulceration; proptosis; decreased vision; restricted EOM","RT; Surgical management",28,"Death"
-17440279,22,"M",,"lid swelling; decreased vision; restricted EOM","RT; Surgical management",25,"Death"
-17440279,64,"M",,"canthus swelling; fixation of the globe; decreased vision; ptosis","RT; CT; Surgical management",7,"Death"
-30321569,50,"F",,"blurred vision with vitreous opacity","Localized RT; methotrexate etoposide phosphate dexamethasone L-aspartate CT",">9","CR"
-29706604,42,"F",,"proptosis; lid swelling; periorbital swelling","cyclophosphamide vincristine prednisolone CT",2,"Death"
-16360212,37,"F",,"progressive headache; nasal blockage; facial swelling; paresthesias of face and mouth; sinusitis; proptosis; periorbital edema; elevated IOP; restricted EOM","CHOP CT; intrathecal methotrexate",1,"Death"
-16360212,56,"M",,"periorbital swelling; periorbital pain; diplopia; proptosis; elevated IOP; restricted EOM","CHOP CT; high dose dexamethasone",6,"Death"
-16360212,65,"M",,"lid swelling; redness; photophobia; conjunctival injection; anterior chamber cell","Hyper-CVAD steroids ifosfamide VP-16 CT; intrathecal methotrexate; RT",4,"Death"
-16360212,42,"F",,"lid swelling; eye swelling; papilledema; restricted EOM; proptosis","IV steroids; CHOP CT",5,"Death"
-16360212,42,"M",,"fever; weight loss; decreased vision; enophthalmos; anterior chamber cell; vitreous cell","Oral/topical steroids; CHOP CT",8,"Death"
-16360212,52,"M",,"numbness of cheek; lid swelling; sinusitis; proptosis","oral steroids; CVAD CT; CHOP CT; EPOCH CT; methotrexate leucovorin",11,"Death"
-16360212,36,"M",,"sinusitis; periorbital swelling; proptosis; restricted EOM","CHOP CT; Localized RT; intrathecal methotrexate; ESHAP CT; cisplatin CT",17,"Death"
-27118749,51,"M","Caucasian","decreased vision; panuveitis; superotemporal retinal detachment","SMILE CT",">5","PR"
-18438613,54,"F","Caucasian","maxillary sinusitis; upper nasal obstruction; decreased vision; vitritis; retinochoroideal infiltration","CHOP CT; CNS prophylaxis with methotrexate",23,"Death"
-33894173,46,"F",,"redness swelling of the eye; decreased vision; increased IOP; swelling of the iris; anterior chamber cell","MESA CT",">3","PR"
-25389681,37,"M",,"flashes; floaters; decreased vision; vitreous cell; ","Total body RT; intravitreal methotrexate; IV CT",">12","CR"
-23715149,33,"F","Caucasian","blurred vision; dimness of vision; lid swelling; photophobia","IV steroids",2,"Death"
-19882515,63,"F",,"decreased vision; anterior chamber cell; vitreous cell; ","methotrexate cytarabine hydrocortisone CT",">10","CR"
-27680487,76,"M","Asian","lid swelling","Localized RT; cdexamethasone carboplatin etoposide ifosphamide CT",">12","PR"
-22323887,57,"F",,"photophobia; diplopia; restricted EOM; conjunctival injection; ptosis; vitreous opacity; iris mass; ophthalmoplegia","RT; CT; intravitreal triamcinolone",3,"Death"
-9709754,66,"F",,"proptosis; diplopia; cellulitis; endophthalmitis","RT",4,"Death"
-9709754,64,"F",,"Retro-orbital tumor; decreased vision","DAT CT; RT",1,"Death"
-12208253,44,"F",,"anteroir uveitis; vitritis; rhegmatogenous retinal detachment","CHOP CT; DHAP; TBI RT",14,"Death"
-12208253,59,"F",,"orbital infiltration; optic atrophy; CN III/IV/VI palsy","CEOP CT; LEMP CT; Localized RT",64,"CR"
-12208253,31,"M",,"orbital infiltration; proptosis; ptosis; restricted EOM; retinal hemorrhage","CEOP CT; DHAP CT; miniBEAM CT; Localized RT",11,"Death"
-12208253,71,"M",,"orbital infiltration; restricted EOM","IMVP CT; Localized RT",5,"Death"
-12208253,62,"M",,"vitritis; macular hole","CEOP CT; Localized RT",">8","CR"
-12208253,40,"F",,"anteroir uveitis; orbital infiltration; proptosis; restricted EOM; disk swelling","CEOP CT; DHAP CT; Localized RT",3,"Death"
-28275603,28,"F",,"epiphora; fullness of the eyelid","SMILE CT; Localized RT",">24","CR"
-24317101,67,"F","Caucasian","follicular conjunctivitis; periorbital pain; periorbital swelling; exophthalmos; restricted EOM; fever; proptosis; chemosis","CHOP CT; SMILE CT",10,"Death"
-20482393,33,"M",,"blurred vision; fever; night sweats; weight loss; decreased vision; anterior chamber cell; nodular and thickened iris; vitreous cell","IV methotrexate; intrathecal methotrexate; systemic prednisolone",5,"Death"
-9929112,57,"M",,"turbid vitreous body; progressive paresthesia; muscle spasm","Localized RT; CT",9,"Death"
-9929112,43,"F",,"blurred vision; diplopia; headache","BOMES CT; ",60,"Death"
-28966461,78,"F","Asian","blurred vision; pressure sensation in the eye; restricted EOM; conjunctival mass; decreased vision","GELOX CT",">10","CR"
-22800846,55,"M","Asian","proptosis; decreased vision; lid swelling; chemosis","RT; CT",2,"Death"
-24831171,45,"F","Caucasian","lid swelling; chemosis; proptosis; restricted EOM","DHAP CT; Localized RT",2,"Death"
-24831171,20,"M","Caucasian","lid swelling; diplopia; restricted EOM","SMILE CT; Localized RT",36,"Death"
-24831171,55,"F","Caucasian","lid swelling; conjunctival mass; proptosis; diplopia","SMILE CT; intrathecal CT; Localized RT",4,"Death"
-18356722,16,"F","Hispanic","fever; periorbital swelling; purulent nose drainage","CT","Unknown","Unknown"
-18356722,69,"F","Caucasian","periorbital swelling; decreased vision","CT",">12","CR"
-18356722,42,"M","Hispanic","fever; eye swelling; sinusitis; epistaxis","CT",">19","PR"
-19551687,29,"M",,"fever; conjunctival swelling; nasal congestion; decreased vision; increased IOP","CHOP CT",">3","CR"
-30865070,94,"F","Caucasian","fever; nasal congestion; fatigue; periorbital edema; ptosis; proptosis; decreased vision; restricted EOM","Palliative",1,"Death"
-30865070,50,"F","Black","periorbital swelling; periorbital redness; pain; bullous conjunctival chemosis; proptosis","Localized RT; 2/3DeVIC CT",">12","CR"
-30865070,62,"M","Hispanic","nasal pain; diplopia; epiphora; blurred vision; decreased vision; periorbital edema; conjunctival injection; proptosis","Localized RT; 2/3DeVIC CT",">4","PR"
-28328558,81,"M","Caucasian","lacrimal gland elargement; anterior uveitis; conjunctival hyperemia; anterior chamber cell; lid swelling; decreased vision","Palliative RT; Palliative CT",5,"Death"
-31124303,86,"M",,"purulent discharge from the eye","Surgical evisceration",2,"Death"
+PMID,Age,Sex,Ethnicity,Presenting Symptoms,Treatment,Survival From Diagnosis (mo),Outcome
+10571346,66,F,Caucasian,lid swelling; proptosis; diplopia,Localized RT,4,Death
+10571346,67,F,Asian,decreased vision; restricted EOM,Localized RT; TAD CT,1,Death
+25811726,57,M,,lid swelling; chemosis; conjunctival mass,Localized RT; cyclophosphamide vincristine hydroxydaunorubicin cisplatin prednisone CT,11,PR
+26585973,66,F,,blurred vision with vitreous opacity,Localized RT; SMILE CT,>24,CR
+22681504,22,F,,lid swelling; restricted EOM; decreased vision; hyperglobus; chemosis,Localized RT; CHOP CT,3,Death
+23387455,52,M,,decreased vision; RAPD; elevated IOP; proptosis; restricted EOM; diplopia; periorbital edema; chemosis; fatigue; weight loss,Localized RT; methotrexate/cytarabine L-asparaginase CT,5,Death
+23969921,41,F,,lid swelling; facial swelling; necrotizing ulcerative periodontitis,CT,3,Death
+29978138,73,F,,blurred vision; lid swelling; anterior uveitis; increased IOP; conjunctival injection and chemosis,Localized RT; 2/3DeVIC CT,>14,CR
+12673566,81,M,Asian,blurred vision with vitreous opacity; proptosis,Localized RT,4,Death
+23663138,39,F,,"dacryoadenitis, chronic rhinosinusitis",cyclophosphamide vincristine adriamycin prenisolone intrathecal methotrexate CT,2,Death
+28194321,56,M,,decreased vision; eye redness; periorbital edema; chemosis; restricted EOM,SMILE CT,2,Death
+24621697,58,F,Asian,periorbital swelling; periorbital pain,dexamethasone ifosfamide etoposide CT,>12,PR
+28146362,28,F,Caucasian,epiphora,Localized RT; GPD CT; SMILE CT,12,Death
+18347456,53,M,,periorbital swelling; diplopia; restricted EOM,Localized RT; intrathecal cytarabine doxorubicin vincristine cyclophosphamide,13,Death
+32874983,3,M,,fever; proptosis; cervical lymphadenopathy; lid swelling; periorbital redness,SMILE CT,>24,CR
+17440279,41,M,,proptosis; lid swelling; ptosis; fixation of the globe; decreased vision,RT; CT; Surgical management,6,Death
+17440279,50,M,,proptosis; lid swelling; ptosis; fixation of the globe; decreased vision,RT; CT; Surgical management,5,Death
+17440279,46,M,,lid swelling; lid ulceration; decreased vision; restricted EOM,RT; CT; Surgical management,14,Death
+17440279,61,M,,inner canthus swelling; cavity formation; proptosis; globe fixation; decreased vision,RT; CT; Surgical management,12,Death
+17440279,16,M,,inner canthus swelling and ulceration; proptosis; decreased vision; restricted EOM,RT; Surgical management,28,Death
+17440279,22,M,,lid swelling; decreased vision; restricted EOM,RT; Surgical management,25,Death
+17440279,64,M,,canthus swelling; fixation of the globe; decreased vision; ptosis,RT; CT; Surgical management,7,Death
+30321569,50,F,,blurred vision with vitreous opacity,Localized RT; methotrexate etoposide phosphate dexamethasone L-aspartate CT,>9,CR
+29706604,42,F,,proptosis; lid swelling; periorbital swelling,cyclophosphamide vincristine prednisolone CT,2,Death
+16360212,37,F,,progressive headache; nasal blockage; facial swelling; paresthesias of face and mouth; sinusitis; proptosis; periorbital edema; elevated IOP; restricted EOM,CHOP CT; intrathecal methotrexate,1,Death
+16360212,56,M,,periorbital swelling; periorbital pain; diplopia; proptosis; elevated IOP; restricted EOM,CHOP CT; high dose dexamethasone,6,Death
+16360212,65,M,,lid swelling; redness; photophobia; conjunctival injection; anterior chamber cell,Hyper-CVAD steroids ifosfamide VP-16 CT; intrathecal methotrexate; RT,4,Death
+16360212,42,F,,lid swelling; eye swelling; papilledema; restricted EOM; proptosis,IV steroids; CHOP CT,5,Death
+16360212,42,M,,fever; weight loss; decreased vision; enophthalmos; anterior chamber cell; vitreous cell,Oral/topical steroids; CHOP CT,8,Death
+16360212,52,M,,numbness of cheek; lid swelling; sinusitis; proptosis,oral steroids; CVAD CT; CHOP CT; EPOCH CT; methotrexate leucovorin,11,Death
+16360212,36,M,,sinusitis; periorbital swelling; proptosis; restricted EOM,CHOP CT; Localized RT; intrathecal methotrexate; ESHAP CT; cisplatin CT,17,Death
+27118749,51,M,Caucasian,decreased vision; panuveitis; superotemporal retinal detachment,SMILE CT,>5,PR
+18438613,54,F,Caucasian,maxillary sinusitis; upper nasal obstruction; decreased vision; vitritis; retinochoroideal infiltration,CHOP CT; CNS prophylaxis with methotrexate,23,Death
+33894173,46,F,,redness swelling of the eye; decreased vision; increased IOP; swelling of the iris; anterior chamber cell,MESA CT,>3,PR
+25389681,37,M,,flashes; floaters; decreased vision; vitreous cell,Total body RT; intravitreal methotrexate; IV CT,>12,CR
+23715149,33,F,Caucasian,blurred vision; dimness of vision; lid swelling; photophobia,IV steroids,2,Death
+19882515,63,F,,decreased vision; anterior chamber cell; vitreous cell; ,methotrexate cytarabine hydrocortisone CT,>10,CR
+27680487,76,M,Asian,lid swelling,Localized RT; cdexamethasone carboplatin etoposide ifosphamide CT,>12,PR
+22323887,57,F,,photophobia; diplopia; restricted EOM; conjunctival injection; ptosis; vitreous opacity; iris mass; ophthalmoplegia,RT; CT; intravitreal triamcinolone,3,Death
+9709754,66,F,,proptosis; diplopia; cellulitis; endophthalmitis,RT,4,Death
+9709754,64,F,,Retro-orbital tumor; decreased vision,DAT CT; RT,1,Death
+12208253,44,F,,anteroir uveitis; vitritis; rhegmatogenous retinal detachment,CHOP CT; DHAP; TBI RT,14,Death
+12208253,59,F,,orbital infiltration; optic atrophy; CN III/IV/VI palsy,CEOP CT; LEMP CT; Localized RT,64,CR
+12208253,31,M,,orbital infiltration; proptosis; ptosis; restricted EOM; retinal hemorrhage,CEOP CT; DHAP CT; miniBEAM CT; Localized RT,11,Death
+12208253,71,M,,orbital infiltration; restricted EOM,IMVP CT; Localized RT,5,Death
+12208253,62,M,,vitritis; macular hole,CEOP CT; Localized RT,>8,CR
+12208253,40,F,,anteroir uveitis; orbital infiltration; proptosis; restricted EOM; disk swelling,CEOP CT; DHAP CT; Localized RT,3,Death
+28275603,28,F,,epiphora; fullness of the eyelid,SMILE CT; Localized RT,>24,CR
+24317101,67,F,Caucasian,follicular conjunctivitis; periorbital pain; periorbital swelling; exophthalmos; restricted EOM; fever; proptosis; chemosis,CHOP CT; SMILE CT,10,Death
+20482393,33,M,,blurred vision; fever; night sweats; weight loss; decreased vision; anterior chamber cell; nodular and thickened iris; vitreous cell,IV methotrexate; intrathecal methotrexate; systemic prednisolone,5,Death
+9929112,57,M,,turbid vitreous body; progressive paresthesia; muscle spasm,Localized RT; CT,9,Death
+9929112,43,F,,blurred vision; diplopia; headache,BOMES CT; ,60,Death
+28966461,78,F,Asian,blurred vision; pressure sensation in the eye; restricted EOM; conjunctival mass; decreased vision,GELOX CT,>10,CR
+22800846,55,M,Asian,proptosis; decreased vision; lid swelling; chemosis,RT; CT,2,Death
+24831171,45,F,Caucasian,lid swelling; chemosis; proptosis; restricted EOM,DHAP CT; Localized RT,2,Death
+24831171,20,M,Caucasian,lid swelling; diplopia; restricted EOM,SMILE CT; Localized RT,36,Death
+24831171,55,F,Caucasian,lid swelling; conjunctival mass; proptosis; diplopia,SMILE CT; intrathecal CT; Localized RT,4,Death
+18356722,69,F,Caucasian,periorbital swelling; decreased vision,CT,>12,CR
+18356722,42,M,Hispanic,fever; eye swelling; sinusitis; epistaxis,CT,>19,PR
+19551687,29,M,,fever; conjunctival swelling; nasal congestion; decreased vision; increased IOP,CHOP CT,>3,CR
+30865070,94,F,Caucasian,fever; nasal congestion; fatigue; periorbital edema; ptosis; proptosis; decreased vision; restricted EOM,Palliative,1,Death
+30865070,50,F,Black,periorbital swelling; periorbital redness; pain; bullous conjunctival chemosis; proptosis,Localized RT; 2/3DeVIC CT,>12,CR
+30865070,62,M,Hispanic,nasal pain; diplopia; epiphora; blurred vision; decreased vision; periorbital edema; conjunctival injection; proptosis,Localized RT; 2/3DeVIC CT,>4,PR
+28328558,81,M,Caucasian,lacrimal gland elargement; anterior uveitis; conjunctival hyperemia; anterior chamber cell; lid swelling; decreased vision,Palliative RT; Palliative CT,5,Death
+31124303,86,M,,purulent discharge from the eye,Surgical evisceration,2,Death
+15785994,41,M,Caucasian,conjunctival swelling; periorbital swelling,CHOP CT; Localized RT,3,Death
