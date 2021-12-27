@@ -1,4 +1,4 @@
-"PMID","Age","Sex","Ethnicity","Presenting Symptoms","Treatment","Survival From Diagnosis (mo)","Outcome","TumorLocationOrbital","TumorLocationSystemic","SerologicalEBVStatus","AnnArborStaging","Immunoshistochemistry","MolecularSubtyping","Ki67","GeographicLocation"
+"PMID","Age","Sex","Ethnicity","Presenting Symptoms","Treatment","Survival From Diagnosis (mo)","Outcome","TumorLocationOrbital","TumorLocationSystemic","SerologicalEBVStatus","AnnArborStaging","Immunohistochemistry","MolecularSubtyping","Ki67","GeographicLocation"
 10571346,66,"F","Caucasian","lid swelling; proptosis; diplopia","Localized RT",4,"Death","intraocular","right leg",,"IIIE","CD45+;CD3+;CD8+;CD56+;TIA-1+;perforin+;LMP+;EBER+",,0.9,"Europe"
 10571346,67,"F","Asian","decreased vision; restricted EOM","Localized RT; TAD CT",1,"Death","retroorbital","None",,"IE","CD45+;CD3+;CD8+;CD56+;GrB+;TIA-1+;perforin+;EBER+",,0.9,"Europe"
 25811726,57,"M",,"lid swelling; chemosis; conjunctival mass","Localized RT; cyclophosphamide vincristine hydroxydaunorubicin cisplatin prednisone CT",11,"PR","conjunctival","None",,"IE","CD2+;CD7+;CD56+;bcl-2+;CD20-;CD8-;CD123-;TdT-;EBER+",,0.9,"MiddleEast"
