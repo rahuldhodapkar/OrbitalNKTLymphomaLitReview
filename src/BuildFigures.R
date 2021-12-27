@@ -37,18 +37,22 @@ char2num <- hashmap(
 )
 data$stage.numeric <- char2num[[stage.numeric]]
 
+
 # extract geographic region information
-data$nktl.region.rate <- hashmap(
-    c('EastAsia', 'SouthAsia', 'SoutEastAsia', 
-        'SouthAmerica', 
-        'Europe', 'MiddleEast', 'NorthAmerica', 'Australia'),
-    c(rep('Asia', 3),
-      'SouthAmerica',
-      rep('Other', 4))
-)[[data$GeographicLocation]]
+data$nktl.region.rate <- factor(
+        hashmap(
+            c('EastAsia', 'SouthAsia', 'SouthEastAsia',
+                'SouthAmerica',
+                'Europe', 'MiddleEast', 'NorthAmerica', 'Australia'),
+            c(rep('Asia', 3),
+              'SouthAmerica',
+              rep('Other', 4))
+        )[[data$GeographicLocation]],
+    levels=c('Other', 'Asia', 'SouthAmerica'),
+    ordered=FALSE)
 
 
-data$ebv.endemic.loc <- data$GeographicLocation %in% c('EastAsia', 'SouthAsia', 'SoutEastAsia')
+data$ebv.endemic.loc <- data$GeographicLocation %in% c('EastAsia', 'SouthAsia', 'SouthEastAsia')
 
 # extract tumor location
 has.orbital <- c()
@@ -215,6 +219,8 @@ surv_median(surv_fit(Surv(time, status) ~ 1, data=data))
 ## 
 print("Number of cases surviving at time of report writing or for >12mo:")
 sum(data$time >= 12 | !data$status)
+sum(data$time >= 6 | !data$status)
+sum(data$time >= 3 | !data$status)
 print("total number of cases:")
 nrow(data)
 
@@ -226,10 +232,164 @@ res.cox <- coxph(
     method = 'exact')
 summary(res.cox)
 
+
+res.cox <- coxph(
+    formula=Surv(time, status) ~ Age + Sex + nktl.region.rate,
+    data = data,
+    method = 'exact')
+summary(res.cox)
+
 ggsurvplot(
     fit = surv_fit(Surv(time, status) ~ (
         nktl.region.rate == 'Asia'
     ), data=data),
     xlab = "Months",
     ylab = "Overall Survival Probability")
+
+
+#####
+# Collate Data for Table 1
+#####
+
+# Age
+#<44,45-64,65+
+age.to.bin.map.tab1 <- hashmap(
+    c(
+        seq(0,39),
+        seq(40,64),
+        seq(65,99)
+    ),
+    c(
+        rep("<40", length(seq(0,39))),
+        rep("40-64", length(seq(40,64))),
+        rep("65+", length(seq(65,99)))
+    )
+)
+data$age.tab1 <- factor(
+    age.to.bin.map.tab1[[data$Age]],
+    levels=c('<40','40-64', '65+'),
+    ordered=TRUE)
+
+
+table(data$age.tab1)
+
+table(data$age.tab1) / sum(table(data$age.tab1))
+
+
+# Sex
+table(data$Sex)
+table(data$Sex) / sum(table(data$Sex))
+
+t.test(data$Age[data$Sex == 'M'],
+       data$Age[data$Sex == 'F'],
+       paired=FALSE)
+
+# Region
+
+# Symptoms
+table(data$has.vision.sx)
+table(data$has.eom.sx)
+table(data$has.lid.sx)
+table(data$has.ptosis)
+table(data$has.proptosis)
+
+# Tumor Location
+table(data$has.orbital)
+table(data$has.intraocular)
+table(data$has.lacrimal)
+table(data$has.conjunctival)
+
+table(data$has.nasosinus)
+table(data$has.cns)
+
+# Therapy
+table(data$Ki67 < 0.2)
+
+table(data$Ki67 >= 0.2 & data$Ki67 < 0.8)
+
+table(data$Ki67 >= 0.8)
+
+#######
+## Multivariate Cox Regression
+#######
+data$is.asia <- data$nktl.region.rate == 'Asia'
+
+res.cox <- coxph(
+    formula=Surv(time, status) ~
+        age.tab1 + # Demo
+        Sex +
+        is.asia +
+        has.surgical + # Tx
+        has.ct +
+        has.rt +
+        has.vision.sx + # SX
+        has.eom.sx +
+        has.lid.sx +
+        has.ptosis +
+        has.proptosis +
+        has.orbital + # Loc
+        has.intraocular +
+        has.lacrimal +
+        has.conjunctival +
+        has.nasosinus +
+        has.cns,
+    data = data,
+    method = 'exact')
+summary(res.cox)
+
+res.cox <- coxph(
+    formula=Surv(time, status) ~
+        age.tab1 + # Demo
+        Sex +
+        is.asia +
+        has.surgical + # Tx
+        strata(has.ct) +
+        has.rt +
+        has.vision.sx + # SX
+        has.eom.sx +
+        has.lid.sx +
+        has.ptosis +
+        has.proptosis +
+        has.orbital + # Loc
+        has.intraocular +
+        has.lacrimal +
+        has.conjunctival +
+        has.nasosinus +
+        has.cns,
+    data = data,
+    method = 'exact')
+summary(res.cox)
+
+# repeat with age-stratification
+res.cox <- coxph(
+    formula=Surv(time, status) ~
+        strata(age.tab1) +
+        Sex +
+        is.asia +
+        has.surgical +
+        has.ct +
+        has.rt
+        ,
+    data = data,
+    method = 'exact')
+summary(res.cox)
+
+# repeat with region-stratification
+res.cox <- coxph(
+    formula=Surv(time, status) ~
+        Age +
+        Sex +
+        strata(is.asia) +
+        has.surgical +
+        has.ct +
+        has.rt
+        ,
+    data = data,
+    method = 'exact')
+summary(res.cox)
+
+
+# plot age distribution, segmented by region
+ggplot(data, aes(x=Age, fill=nktl.region.rate)) +
+    geom_density(alpha = 0.5)
 
