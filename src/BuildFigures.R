@@ -92,8 +92,20 @@ data$has.cns <- has.cns
 
 # extract therapy type
 has.surgical <- c()
+has.orbitotomy.surgical <- c()
+
 has.ct <- c()
+
+has.gelox.ct <- c()
+has.dhap.ct <- c()
+has.methotrexate.ct <- c()
+has.chop.ct <- c()
+has.ceop.ct <- c()
+has.smile.ct <- c()
+has.devic.ct <- c()
+
 has.rt <- c()
+has.localized.rt <- c()
 
 for (i in 1:nrow(data)) {
     loc.str <- data$Treatment[[i]]
@@ -101,13 +113,46 @@ for (i in 1:nrow(data)) {
     has.surgical <- c(has.surgical, 
         any(str_detect(unlist(loc.toks), pattern=c('surgical'))))
     has.ct <- c(has.ct,
-        any(str_detect(unlist(loc.toks), pattern=c('ct'))))
+        any(str_detect(unlist(loc.toks), pattern=c(' ct', '^ct'))))
     has.rt <- c(has.rt,
-        any(str_detect(unlist(loc.toks), pattern=c('rt'))))
+        any(str_detect(unlist(loc.toks), pattern=c(' rt'))))
+
+    has.gelox.ct <- c(has.gelox.ct,
+        any(str_detect(unlist(loc.toks), pattern=c('gelox'))))
+    has.dhap.ct <- c(has.dhap.ct,
+        any(str_detect(unlist(loc.toks), pattern=c('dhap'))))
+    has.methotrexate.ct <- c(has.methotrexate.ct,
+        any(str_detect(unlist(loc.toks), pattern=c('methotrexate'))))
+    has.chop.ct <- c(has.chop.ct,
+        any(str_detect(unlist(loc.toks), pattern=c('chop'))))
+    has.ceop.ct <- c(has.ceop.ct,
+        any(str_detect(unlist(loc.toks), pattern=c('ceop'))))
+    has.smile.ct <- c(has.smile.ct,
+        any(str_detect(unlist(loc.toks), pattern=c('smile'))))
+    has.devic.ct <- c(has.devic.ct,
+        any(str_detect(unlist(loc.toks), pattern=c('2/3devic'))))
+
+    has.orbitotomy.surgical <- c(has.orbitotomy.surgical, 
+        any(str_detect(unlist(loc.toks), pattern=c('orbitotomy'))))
+
+    has.localized.rt <- c(has.localized.rt, 
+        any(str_detect(unlist(loc.toks), pattern=c('localized rt'))))
 }
 data$has.surgical <- has.surgical
+data$has.orbitotomy.surgical <- has.orbitotomy.surgical
+
 data$has.ct <- has.ct
+
+data$has.gelox.ct <- has.gelox.ct
+data$has.dhap.ct <- has.dhap.ct
+data$has.methotrexate.ct <- has.methotrexate.ct
+data$has.chop.ct <- has.chop.ct
+data$has.ceop.ct <- has.ceop.ct
+data$has.smile.ct <- has.smile.ct
+data$has.devic.ct <- has.devic.ct
+
 data$has.rt <- has.rt
+data$has.localized.rt <- has.localized.rt
 
 # extract ocular symptoms
 has.vision.sx <- c()
@@ -135,7 +180,71 @@ data$has.lid.sx <- has.lid.sx
 data$has.proptosis <- has.proptosis
 data$has.ptosis <- has.ptosis
 
-head(data[,c('has.ptosis', 'has.proptosis', 'Presenting.Symptoms')])
+#' extract markers from a vector of delimited strings
+#' 
+#' @param x A vector of delimited strings
+#' @param markers.list a list of markers to extract
+#' @param split.pattern The delimiter
+#' @param pos.indicator.string the suffix indicating a positive entry
+#' @param neg.indicator.string the suffix indicating a negative entry
+#' @return Data frame of length equal to length(x), with all markers
+#'
+ExtractMarkers <- function(x, marker.list, 
+    split.pattern=';',
+    pos.indicator.string='\\+',
+    neg.indicator.string='\\-'
+    ) {
+
+    df.entries <- lapply(
+        marker.list,
+        function(name) {
+            rep(as.logical(NA), length(x))
+        }
+    )
+    names(df.entries) <- marker.list
+    df <- do.call(data.frame, df.entries)
+
+    marker2name <- hashmap(marker.list, colnames(df))
+    for (i in 1:length(x)) {
+        toks <- str_split(tolower(x[[i]]), pattern=split.pattern, simplify=FALSE)
+        for(m in marker.list) {
+            if(any(str_detect(unlist(toks), 
+                    pattern=c(paste0(tolower(m),pos.indicator.string))))) {
+                df[[i,marker2name[[m]]]] <- TRUE
+            }
+            if(any(str_detect(unlist(toks), 
+                    pattern=c(paste0(tolower(m),neg.indicator.string))))) {
+                if(!is.na(df[[i,m]])){
+                    stop(paste0('Corrupt data at SystematicReview.csv: line ',
+                        as.character(i), ' marker ',m,' is both + and -.'))
+                }
+
+                df[[i,marker2name[[m]]]] <- FALSE
+            }
+        }
+    }
+    return(df)
+}
+
+ihc.markers <- ExtractMarkers(data$Immunohistochemistry,
+    c('CD3','CD4','CD8','CD20','CD56','perforin','GrB','TIA-1','EBER'))
+
+data <- cbind(data, ihc.markers)
+
+sum(rowSums(!is.na(as.matrix(ihc.markers))) == 0)
+
+# add EBV serology data
+ebv.sero.status <- rep(as.logical(NA), nrow(data))
+ebv.sero.status[grepl('Positive', data$SerologicalEBVStatus)] <- TRUE
+ebv.sero.status[grepl('Negative', data$SerologicalEBVStatus)] <- FALSE
+data$ebv.sero.status <- ebv.sero.status
+
+########
+## Persist cleaned data to CSV
+########
+
+write.csv(data, file='./calc/general/cleaned_data.csv', row.names=FALSE)
+message('cleaned data persisted at `./calc/general/cleaned_data.csv`')
 
 #####
 # PRISMA diagram
@@ -393,3 +502,33 @@ summary(res.cox)
 ggplot(data, aes(x=Age, fill=nktl.region.rate)) +
     geom_density(alpha = 0.5)
 
+## Immunophenotyping data
+
+for (m in colnames(ihc.markers)) {
+    print("###############")
+    print(m)
+    print(table(ihc.markers[,m]))
+    print(table(ihc.markers[,m])/sum(table(ihc.markers[,m])))
+    print(sum(table(ihc.markers[,m])))
+    print(sum(table(ihc.markers[,m]))/64)
+    print("###############")
+}
+
+table(data$ebv.sero.status) / sum(table(data$ebv.sero.status))
+
+## gather data for management
+
+ct.subset.cols <- c(
+    'has.gelox.ct', 'has.dhap.ct', 'has.methotrexate.ct',
+    'has.chop.ct', 'has.smile.ct', 'has.devic.ct'
+)
+
+for (m in ct.subset.cols) {
+    print("###############")
+    print(m)
+    print(table(data[,m]))
+    print(table(data[,m])/sum(table(data[,m])))
+    print(sum(table(data[,m])))
+    print(sum(table(data[,m]))/64)
+    print("###############")
+}
