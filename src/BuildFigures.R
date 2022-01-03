@@ -446,6 +446,35 @@ res.cox <- coxph(
     method = 'exact')
 summary(res.cox)
 
+print("===== all specific CT regimens =====")
+res.cox <- coxph(
+    formula=Surv(time, status) ~
+        age.tab1 + # Demo
+        Sex +
+        is.asia +
+        has.surgical + # Tx
+        has.chop.ct +
+        has.methotrexate.ct +
+        has.smile.ct +
+        has.dhap.ct +
+        has.ceop.ct +
+        has.devic.ct +
+        has.rt +
+        has.vision.sx + # SX
+        has.eom.sx +
+        has.lid.sx +
+        has.ptosis +
+        has.proptosis +
+        has.orbital + # Loc
+        has.intraocular +
+        has.lacrimal +
+        has.conjunctival +
+        has.nasosinus +
+        has.cns,
+    data = data,
+    method = 'exact')
+summary(res.cox)
+
 res.cox <- coxph(
     formula=Surv(time, status) ~
         age.tab1 + # Demo
