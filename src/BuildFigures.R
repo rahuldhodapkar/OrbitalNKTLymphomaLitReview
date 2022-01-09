@@ -363,6 +363,39 @@ ggsurvplot(
     xlab = "Months",
     ylab = "Overall Survival Probability")
 
+ggsurvplot(
+    fit = surv_fit(Surv(time, status) ~ (
+        has.smile.ct
+    ), data=subset(data, xor(has.chop.ct, has.smile.ct))),
+    xlab = "Months",
+    ylab = "Overall Survival Probability")
+
+km.plots <- ggsurvplot(
+    fit = surv_fit(Surv(time, status) ~ has.smile.ct,
+        data=subset(data, xor(has.chop.ct, has.smile.ct))),
+    #pval = TRUE, conf.int = TRUE,
+    xlab = "Months",
+    xlim = c(1,23),
+    break.x.by = 3,
+    ylab = "Overall Survival Probability",
+    risk.table=TRUE)
+
+km.plots[[1]] + background_grid()
+ggsave('./fig/general/kaplan_meier_chop_smile.png', height=8.5, width=8)
+
+survdiff(Surv(time, status) ~ has.smile.ct,
+    data=subset(data, xor(has.chop.ct, has.smile.ct)))
+
+surv_median(surv_fit(Surv(time, status) ~ has.smile.ct,
+    data=subset(data, xor(has.chop.ct, has.smile.ct))))
+
+surv_median(
+    surv_fit(Surv(time, status) ~ has.smile.ct,
+    data=data))
+surv_median(
+    surv_fit(Surv(time, status) ~ has.chop.ct,
+    data=data))
+
 
 #####
 # Collate Data for Table 1
