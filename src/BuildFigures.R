@@ -59,6 +59,8 @@ has.orbital <- c()
 has.intraocular <- c()
 has.nasosinus <- c()
 has.lacrimal <- c()
+has.lacrimal.gland <- c()
+has.lacrimal.drainage <- c()
 has.conjunctival <- c()
 has.cns <- c()
 
@@ -73,9 +75,13 @@ for (i in 1:nrow(data)) {
     has.intraocular <- c(has.intraocular,
         any(str_detect(unlist(loc.toks), pattern=c('intraocular'))))
     has.nasosinus <- c(has.nasosinus,
-        any(str_detect(unlist(loc.toks), pattern=c('nose', 'naso', 'nasal'))))
+        any(str_detect(unlist(loc.toks), pattern=c('nose', 'nasopharynx', 'nasal'))))
     has.lacrimal <- c(has.lacrimal,
         any(str_detect(unlist(loc.toks), pattern=c('lacrimal'))))
+    has.lacrimal.gland <- c(has.lacrimal.gland,
+        any(str_detect(unlist(loc.toks), pattern=c('lacrimal gland'))))
+    has.lacrimal.drainage <- c(has.lacrimal.drainage,
+        any(str_detect(unlist(loc.toks), pattern=c('nasolacrimal', 'lacrimal sac'))))
     has.conjunctival <- c(has.conjunctival,
         any(str_detect(unlist(loc.toks), pattern=c('conjunctiva'))))
     has.cns <- c(has.cns,
@@ -86,6 +92,8 @@ data$has.orbital <- has.orbital
 data$has.intraocular <- has.intraocular
 data$has.nasosinus <- has.nasosinus
 data$has.lacrimal <- has.lacrimal
+data$has.lacrimal.gland <- has.lacrimal.gland
+data$has.lacrimal.drainage <- has.lacrimal.drainage
 data$has.conjunctival <- has.conjunctival
 data$has.cns <- has.cns
 
@@ -438,7 +446,8 @@ res.cox <- coxph(
         has.proptosis +
         has.orbital + # Loc
         has.intraocular +
-        has.lacrimal +
+        has.lacrimal.gland +
+        has.lacrimal.drainage +
         has.conjunctival +
         has.nasosinus +
         has.cns,
@@ -467,7 +476,8 @@ res.cox <- coxph(
         has.proptosis +
         has.orbital + # Loc
         has.intraocular +
-        has.lacrimal +
+        has.lacrimal.gland +
+        has.lacrimal.drainage +
         has.conjunctival +
         has.nasosinus +
         has.cns,
