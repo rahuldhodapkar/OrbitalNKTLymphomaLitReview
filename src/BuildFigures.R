@@ -10,7 +10,6 @@ library(survival) # must import survival before survminer
 library(survminer)
 library(stringr)
 library(cowplot)
-library(hashmap)
 
 ######## Create output scaffolding
 ifelse(!dir.exists("./fig"), dir.create("./fig"), FALSE)
@@ -20,34 +19,54 @@ ifelse(!dir.exists("./calc"), dir.create("./calc"), FALSE)
 ifelse(!dir.exists("./calc/general"), dir.create("./calc/general"), FALSE)
 
 #################################################
+## Helper Functions
+#################################################
+
+hashmap <- function(keys, vals) {
+    x <- new.env(hash=TRUE)
+    for(i in 1:length(keys)) {
+        x[[as.character(keys[[i]])]] <- vals[[i]]
+    }
+    return(x)
+}
+
+happly <- function(hm, vec, ...) {
+    return(sapply(
+      X = vec, 
+      FUN = function(x) { hm[[as.character(x)]] },
+      ...))
+}
+
+#################################################
 ## LOAD DATA
 #################################################
 
 data <- read.csv('./data/SystematicReview.csv')
-
 
 #####
 # Clean Data
 #####
 stage.numeric <- data$AnnArborStaging
 stage.numeric <- str_replace(stage.numeric, '[AE]$', '')
-char2num <- hashmap(
-    c('','I', 'II', 'III', 'IV'),
-    c(NA,1,2,3,4)
-)
-data$stage.numeric <- char2num[[stage.numeric]]
+stage.numeric[stage.numeric == 'I'] <- 1
+stage.numeric[stage.numeric == 'II'] <- 2
+stage.numeric[stage.numeric == 'III'] <- 3
+stage.numeric[stage.numeric == 'IV'] <- 4
+stage.numeric <- as.numeric(stage.numeric)
+
+data$stage.numeric <- stage.numeric
 
 
 # extract geographic region information
 data$nktl.region.rate <- factor(
-        hashmap(
+        happly(hashmap(
             c('EastAsia', 'SouthAsia', 'SouthEastAsia',
                 'SouthAmerica',
                 'Europe', 'MiddleEast', 'NorthAmerica', 'Australia'),
             c(rep('Asia', 3),
               'SouthAmerica',
               rep('Other', 4))
-        )[[data$GeographicLocation]],
+        ), data$GeographicLocation),
     levels=c('Other', 'Asia', 'SouthAmerica'),
     ordered=FALSE)
 
@@ -218,7 +237,7 @@ ExtractMarkers <- function(x, marker.list,
         for(m in marker.list) {
             if(any(str_detect(unlist(toks), 
                     pattern=c(paste0(tolower(m),pos.indicator.string))))) {
-                df[[i,marker2name[[m]]]] <- TRUE
+                df[[i,happly(marker2name, m)]] <- TRUE
             }
             if(any(str_detect(unlist(toks), 
                     pattern=c(paste0(tolower(m),neg.indicator.string))))) {
@@ -227,7 +246,7 @@ ExtractMarkers <- function(x, marker.list,
                         as.character(i), ' marker ',m,' is both + and -.'))
                 }
 
-                df[[i,marker2name[[m]]]] <- FALSE
+                df[[i,happly(marker2name, m)]] <- FALSE
             }
         }
     }
@@ -292,7 +311,7 @@ age.to.bin.map <- hashmap(
     )
 )
 
-data$binned.age <- age.to.bin.map[[data$Age]]
+data$binned.age <- happly(age.to.bin.map, data$Age)
 
 ggplot(data, aes(x=binned.age, fill=Sex)) +
     geom_bar() +
@@ -416,7 +435,7 @@ age.to.bin.map.tab1 <- hashmap(
     )
 )
 data$age.tab1 <- factor(
-    age.to.bin.map.tab1[[data$Age]],
+    happly(age.to.bin.map.tab1, data$Age),
     levels=c('<40','40-64', '65+'),
     ordered=TRUE)
 
@@ -463,12 +482,14 @@ table(data$Ki67 >= 0.8)
 ## Multivariate Cox Regression
 #######
 data$is.asia <- data$nktl.region.rate == 'Asia'
+data$is.stage4 <- data$stage.numeric > 3
 
 res.cox <- coxph(
     formula=Surv(time, status) ~
         age.tab1 + # Demo
         Sex +
         is.asia +
+        is.stage4 +
         has.surgical + # Tx
         has.ct +
         has.rt +
@@ -493,7 +514,6 @@ res.cox <- coxph(
     formula=Surv(time, status) ~
         age.tab1 + # Demo
         Sex +
-        is.asia +
         has.surgical + # Tx
         has.chop.ct +
         has.methotrexate.ct +
