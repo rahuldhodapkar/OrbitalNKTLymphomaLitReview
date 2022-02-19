@@ -10,6 +10,7 @@ library(survival) # must import survival before survminer
 library(survminer)
 library(stringr)
 library(cowplot)
+library(MASS)
 
 ######## Create output scaffolding
 ifelse(!dir.exists("./fig"), dir.create("./fig"), FALSE)
@@ -46,16 +47,21 @@ data <- read.csv('./data/SystematicReview.csv')
 #####
 # Clean Data
 #####
-stage.numeric <- data$AnnArborStaging
-stage.numeric <- str_replace(stage.numeric, '[AE]$', '')
-stage.numeric[stage.numeric == 'I'] <- 1
-stage.numeric[stage.numeric == 'II'] <- 2
-stage.numeric[stage.numeric == 'III'] <- 3
-stage.numeric[stage.numeric == 'IV'] <- 4
-stage.numeric <- as.numeric(stage.numeric)
+stage.numeric <- sapply(str_match(data$AnnArborStageInferred, '^([IV]*)')[,1], function(x) {
+  if (x == 'I') {
+    return(1)
+  } else if (x == 'II') {
+    return(2)
+  } else if (x == 'III') {
+    return(3)
+  } else if (x == 'IV') {
+    return(4)
+  } else{ 
+    stop('Invalid Ann Arbor Stage provided in column "AnnArborStageInferred"')
+  }
+}, USE.NAMES=FALSE)
 
 data$stage.numeric <- stage.numeric
-
 
 # extract geographic region information
 data$nktl.region.rate <- factor(
@@ -389,6 +395,13 @@ ggsurvplot(
     xlab = "Months",
     ylab = "Overall Survival Probability")
 
+ggsurvplot(
+  fit = surv_fit(Surv(time, status) ~ 
+    stage.numeric, data=data),
+  xlab = "Months",
+  ylab = "Overall Survival Probability",
+  xlim = c(1,12))
+
 km.plots <- ggsurvplot(
     fit = surv_fit(Surv(time, status) ~ has.smile.ct,
         data=subset(data, xor(has.chop.ct, has.smile.ct))),
@@ -486,10 +499,9 @@ data$is.stage4 <- data$stage.numeric > 3
 
 res.cox <- coxph(
     formula=Surv(time, status) ~
-        age.tab1 + # Demo
-        Sex +
-        is.asia +
-        is.stage4 +
+        strata(age.tab1) + # Demo
+        strata(Sex) +
+        stage.numeric +
         has.surgical + # Tx
         has.ct +
         has.rt +
@@ -507,120 +519,73 @@ res.cox <- coxph(
         has.cns,
     data = data,
     method = 'exact')
-summary(res.cox)
 
-print("===== all specific CT regimens =====")
-res.cox <- coxph(
-    formula=Surv(time, status) ~
-        age.tab1 + # Demo
-        Sex +
-        has.surgical + # Tx
-        has.chop.ct +
-        has.methotrexate.ct +
-        has.smile.ct +
-        has.dhap.ct +
-        has.ceop.ct +
-        has.devic.ct +
-        has.rt +
-        has.vision.sx + # SX
-        has.eom.sx +
-        has.lid.sx +
-        has.ptosis +
-        has.proptosis +
-        has.orbital + # Loc
-        has.intraocular +
-        has.lacrimal.gland +
-        has.lacrimal.drainage +
-        has.conjunctival +
-        has.nasosinus +
-        has.cns,
-    data = data,
-    method = 'exact')
-summary(res.cox)
+step.model <- stepAIC(res.cox, direction = "backward", 
+                      trace = FALSE)
+summary(step.model)
 
-res.cox <- coxph(
-    formula=Surv(time, status) ~
-        age.tab1 + # Demo
-        Sex +
-        is.asia +
-        has.surgical + # Tx
-        strata(has.ct) +
-        has.rt +
-        has.vision.sx + # SX
-        has.eom.sx +
-        has.lid.sx +
-        has.ptosis +
-        has.proptosis +
-        has.orbital + # Loc
-        has.intraocular +
-        has.lacrimal +
-        has.conjunctival +
-        has.nasosinus +
-        has.cns,
-    data = data,
-    method = 'exact')
-summary(res.cox)
-
-# repeat with age-stratification
-res.cox <- coxph(
-    formula=Surv(time, status) ~
-        strata(age.tab1) +
-        Sex +
-        is.asia +
-        has.surgical +
-        has.ct +
-        has.rt
-        ,
-    data = data,
-    method = 'exact')
-summary(res.cox)
-
-# repeat with region-stratification
-res.cox <- coxph(
-    formula=Surv(time, status) ~
-        Age +
-        Sex +
-        strata(is.asia) +
-        has.surgical +
-        has.ct +
-        has.rt
-        ,
-    data = data,
-    method = 'exact')
-summary(res.cox)
-
-
-# plot age distribution, segmented by region
-ggplot(data, aes(x=Age, fill=nktl.region.rate)) +
-    geom_density(alpha = 0.5)
-
-## Immunophenotyping data
-
-for (m in colnames(ihc.markers)) {
-    print("###############")
-    print(m)
-    print(table(ihc.markers[,m]))
-    print(table(ihc.markers[,m])/sum(table(ihc.markers[,m])))
-    print(sum(table(ihc.markers[,m])))
-    print(sum(table(ihc.markers[,m]))/64)
-    print("###############")
-}
-
-table(data$ebv.sero.status) / sum(table(data$ebv.sero.status))
-
-## gather data for management
-
-ct.subset.cols <- c(
-    'has.gelox.ct', 'has.dhap.ct', 'has.methotrexate.ct',
-    'has.chop.ct', 'has.smile.ct', 'has.devic.ct'
+sx.vec <- c(
+  "has.vision.sx",
+  "has.eom.sx",
+  "has.lid.sx",
+  "has.ptosis",
+  "has.proptosis"
 )
 
-for (m in ct.subset.cols) {
-    print("###############")
-    print(m)
-    print(table(data[,m]))
-    print(table(data[,m])/sum(table(data[,m])))
-    print(sum(table(data[,m])))
-    print(sum(table(data[,m]))/64)
-    print("###############")
+loc.vec <- c(
+  "has.orbital",
+  "has.intraocular",
+  "has.lacrimal.gland",
+  "has.lacrimal.drainage",
+  "has.conjunctival",
+  "has.nasosinus",
+  "has.cns"
+)
+
+# show significant correlation between tumor location and reported symptoms.
+jaccard.sim <- matrix(0, nrow=length(sx.vec), ncol=length(loc.vec),
+                      dimnames=list(sx.vec, loc.vec))
+cor.val <- matrix(0, nrow=length(sx.vec), ncol=length(loc.vec),
+                  dimnames=list(sx.vec, loc.vec))
+fisher.p <- matrix(0, nrow=length(sx.vec), ncol=length(loc.vec),
+                      dimnames=list(sx.vec, loc.vec))
+
+for (i in 1:length(sx.vec)) {
+  sx <- sx.vec[[i]]
+  for (j in 1:length(loc.vec)) {
+    loc <- loc.vec[[j]]
+    c.tab <- table(data[,sx], data[,loc])
+    
+    jaccard.sim[[i,j]] <- (
+      sum(data[,sx] & data[,loc]) / sum(data[,sx] | data[,loc])
+    )
+    cor.val[[i,j]] <- cor(data[,sx], data[,loc])
+    fisher.p[[i,j]] <- fisher.test(table(data[,sx], data[,loc]))$p.value
+  }
 }
+
+fisher.p.adj <- fisher.p %>% 
+  as.numeric() %>%
+  p.adjust(method='bonferroni') %>%
+  matrix(nrow=length(sx.vec), ncol=length(loc.vec),
+    dimnames = list(sx.vec, loc.vec), byrow = FALSE)
+fisher.p.adj
+
+print("===== all specific CT regimens =====")
+res.cox.spec.ct <- coxph(
+  formula=Surv(time, status) ~
+    strata(age.tab1) + # Demo
+    strata(Sex) +
+    strata(stage.numeric) +
+    has.chop.ct +
+    has.methotrexate.ct +
+    has.smile.ct +
+    has.dhap.ct +
+    has.ceop.ct +
+    has.devic.ct,
+  data = data,
+  method = 'exact')
+step.model.spec.ct <- stepAIC(res.cox.spec.ct, direction = "backward", 
+                      trace = FALSE)
+summary(step.model.spec.ct)
+
