@@ -1,0 +1,24 @@
+Loading required package: ggpubr
+
+Attaching package: ‘survminer’
+
+The following object is masked from ‘package:survival’:
+
+    myeloma
+
+
+Attaching package: ‘cowplot’
+
+The following object is masked from ‘package:ggpubr’:
+
+    get_legend
+
+There were 50 or more warnings (use warnings() to see the first 50)
+There were 46 warnings (use warnings() to see them)
+There were 50 or more warnings (use warnings() to see the first 50)
+cleaned data persisted at `./calc/general/cleaned_data.csv`
+Warning message:
+`select_()` was deprecated in dplyr 0.7.0.
+Please use `select()` instead.
+This warning is displayed once every 8 hours.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. 

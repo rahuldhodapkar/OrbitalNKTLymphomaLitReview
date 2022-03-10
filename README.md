@@ -22,3 +22,16 @@ included, if articles were literature reviews or summaries of previously describ
 for the original article with case descriptions were extracted from the review references and
 subsequently evaluated using the inclusion and exclusion criteria above.
 
+## Running Code
+All scripts are designed to be run from the root directory of this repository. To install
+dependencies, invoke:
+
+    make setup
+
+To perform search term deduplication (before manual literature review stage), invoke:
+
+    make merge-searches
+
+To build figures from systematic review data, invoke:
+
+    make run

@@ -1,0 +1,506 @@
+[1] "===== Data Exclusion Reason for PRISMA Diagram ====="
+
+  Different disease            included   Initial exclusion Missing information 
+                  5                  41                  90                   6 
+        Not english         Not primary 
+                 13                  10 
+[1] "===== Overall Median Survival ====="
+  strata median lower upper
+1    All      7     5    13
+[1] "===== Survival Number for Manuscript ====="
+[1] "Number of cases surviving at time of report writing or for >12mo:"
+[1] "sum(data$time >= 12 | !data$status)"
+[1] 27
+[1] "sum(data$time >= 6 | !data$status)"
+[1] 36
+[1] "sum(data$time >= 3 | !data$status)"
+[1] 52
+[1] "total number of cases:"
+[1] 64
+[1] "===== Age Table Data ====="
+[1] "Counts for [age.tab1]"
+
+  <40 40-64   65+ 
+   18    33    13 
+[1] "Percentage for [age.tab1]"
+
+     <40    40-64      65+ 
+0.281250 0.515625 0.203125 
+[1] "===== Sex Table Data ====="
+[1] "Counts for [Sex]"
+
+ F  M 
+30 34 
+[1] "Percentage for [Sex]"
+
+      F       M 
+0.46875 0.53125 
+[1] "t-test for sex: "
+
+	Welch Two Sample t-test
+
+data:  data$Age[data$Sex == "M"] and data$Age[data$Sex == "F"]
+t = -0.34246, df = 62, p-value = 0.7332
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -10.630989   7.521185
+sample estimates:
+mean of x mean of y 
+ 48.41176  49.96667 
+
+[1] "===== Region Table Data ====="
+[1] "Counts for [GeographicLocation]"
+
+    Australia      EastAsia        Europe    MiddleEast  NorthAmerica 
+            4            22            10             1            22 
+ SouthAmerica     SouthAsia SouthEastAsia 
+            2             1             2 
+[1] "Percentage for [GeographicLocation]"
+
+    Australia      EastAsia        Europe    MiddleEast  NorthAmerica 
+     0.062500      0.343750      0.156250      0.015625      0.343750 
+ SouthAmerica     SouthAsia SouthEastAsia 
+     0.031250      0.015625      0.031250 
+[1] "===== Symptoms Table Data ====="
+[1] "===== > "
+[1] "Counts for [has.vision.sx]"
+
+FALSE  TRUE 
+   33    31 
+[1] "Percentage for [has.vision.sx]"
+
+   FALSE     TRUE 
+0.515625 0.484375 
+[1] "===== > "
+[1] "Counts for [has.eom.sx]"
+
+FALSE  TRUE 
+   36    28 
+[1] "Percentage for [has.eom.sx]"
+
+ FALSE   TRUE 
+0.5625 0.4375 
+[1] "===== > "
+[1] "Counts for [has.lid.sx]"
+
+FALSE  TRUE 
+   42    22 
+[1] "Percentage for [has.lid.sx]"
+
+  FALSE    TRUE 
+0.65625 0.34375 
+[1] "===== > "
+[1] "Counts for [has.ptosis]"
+
+FALSE  TRUE 
+   58     6 
+[1] "Percentage for [has.ptosis]"
+
+  FALSE    TRUE 
+0.90625 0.09375 
+[1] "===== > "
+[1] "Counts for [has.proptosis]"
+
+FALSE  TRUE 
+   40    24 
+[1] "Percentage for [has.proptosis]"
+
+FALSE  TRUE 
+0.625 0.375 
+[1] "===== Tumor Location Table Data ====="
+[1] "===== > "
+[1] "Counts for [has.orbital]"
+
+FALSE  TRUE 
+   14    50 
+[1] "Percentage for [has.orbital]"
+
+  FALSE    TRUE 
+0.21875 0.78125 
+[1] "===== > "
+[1] "Counts for [has.intraocular]"
+
+FALSE  TRUE 
+   54    10 
+[1] "Percentage for [has.intraocular]"
+
+  FALSE    TRUE 
+0.84375 0.15625 
+[1] "===== > "
+[1] "Counts for [has.lacrimal.gland]"
+
+FALSE  TRUE 
+   57     7 
+[1] "Percentage for [has.lacrimal.gland]"
+
+   FALSE     TRUE 
+0.890625 0.109375 
+[1] "===== > "
+[1] "Counts for [has.lacrimal.drainage]"
+
+FALSE  TRUE 
+   60     4 
+[1] "Percentage for [has.lacrimal.drainage]"
+
+ FALSE   TRUE 
+0.9375 0.0625 
+[1] "===== > "
+[1] "Counts for [has.conjunctival]"
+
+FALSE  TRUE 
+   61     3 
+[1] "Percentage for [has.conjunctival]"
+
+   FALSE     TRUE 
+0.953125 0.046875 
+[1] "===== > "
+[1] "Counts for [has.nasosinus]"
+
+FALSE  TRUE 
+   41    23 
+[1] "Percentage for [has.nasosinus]"
+
+   FALSE     TRUE 
+0.640625 0.359375 
+[1] "===== > "
+[1] "Counts for [has.cns]"
+
+FALSE  TRUE 
+   57     7 
+[1] "Percentage for [has.cns]"
+
+   FALSE     TRUE 
+0.890625 0.109375 
+[1] "===== Ki67 Table Data ====="
+[1] "Counts for [Ki67.binned]"
+
+0.5 <= Ki67 < 0.8       0.8 <= Ki67        Ki67 < 0.5 
+                4                13                 4 
+[1] "Percentage for [Ki67.binned]"
+
+0.5 <= Ki67 < 0.8       0.8 <= Ki67        Ki67 < 0.5 
+        0.1904762         0.6190476         0.1904762 
+[1] "===== Therapy Table Data ====="
+[1] "Counts for [has.surgical]"
+
+FALSE  TRUE 
+   51    13 
+[1] "Percentage for [has.surgical]"
+
+   FALSE     TRUE 
+0.796875 0.203125 
+[1] "===== > "
+[1] "Counts for [has.orbitotomy.surgical]"
+
+FALSE  TRUE 
+   58     6 
+[1] "Percentage for [has.orbitotomy.surgical]"
+
+  FALSE    TRUE 
+0.90625 0.09375 
+[1] "===== > "
+[1] "Counts for [has.unspecified.surgical]"
+
+FALSE  TRUE 
+   57     7 
+[1] "Percentage for [has.unspecified.surgical]"
+
+   FALSE     TRUE 
+0.890625 0.109375 
+[1] "Counts for [has.rt]"
+
+FALSE  TRUE 
+   29    35 
+[1] "Percentage for [has.rt]"
+
+   FALSE     TRUE 
+0.453125 0.546875 
+[1] "===== > "
+[1] "Counts for [has.localized.rt]"
+
+FALSE  TRUE 
+   31    33 
+[1] "Percentage for [has.localized.rt]"
+
+   FALSE     TRUE 
+0.484375 0.515625 
+[1] "===== > "
+[1] "Counts for [has.total.body.rt]"
+
+FALSE  TRUE 
+   63     1 
+[1] "Percentage for [has.total.body.rt]"
+
+   FALSE     TRUE 
+0.984375 0.015625 
+[1] "===== > "
+[1] "Counts for [has.unspecified.rt]"
+
+FALSE  TRUE 
+   63     1 
+[1] "Percentage for [has.unspecified.rt]"
+
+   FALSE     TRUE 
+0.984375 0.015625 
+[1] "Counts for [has.ct]"
+
+FALSE  TRUE 
+   12    52 
+[1] "Percentage for [has.ct]"
+
+ FALSE   TRUE 
+0.1875 0.8125 
+[1] "===== > "
+[1] "Counts for [has.gelox.ct]"
+
+FALSE  TRUE 
+   62     2 
+[1] "Percentage for [has.gelox.ct]"
+
+  FALSE    TRUE 
+0.96875 0.03125 
+[1] "===== > "
+[1] "Counts for [has.dhap.ct]"
+
+FALSE  TRUE 
+   61     3 
+[1] "Percentage for [has.dhap.ct]"
+
+   FALSE     TRUE 
+0.953125 0.046875 
+[1] "===== > "
+[1] "Counts for [has.methotrexate.ct]"
+
+FALSE  TRUE 
+   54    10 
+[1] "Percentage for [has.methotrexate.ct]"
+
+  FALSE    TRUE 
+0.84375 0.15625 
+[1] "===== > "
+[1] "Counts for [has.chop.ct]"
+
+FALSE  TRUE 
+   52    12 
+[1] "Percentage for [has.chop.ct]"
+
+ FALSE   TRUE 
+0.8125 0.1875 
+[1] "===== > "
+[1] "Counts for [has.ceop.ct]"
+
+FALSE  TRUE 
+   61     3 
+[1] "Percentage for [has.ceop.ct]"
+
+   FALSE     TRUE 
+0.953125 0.046875 
+[1] "===== > "
+[1] "Counts for [has.smile.ct]"
+
+FALSE  TRUE 
+   55     9 
+[1] "Percentage for [has.smile.ct]"
+
+   FALSE     TRUE 
+0.859375 0.140625 
+[1] "===== > "
+[1] "Counts for [has.devic.ct]"
+
+FALSE  TRUE 
+   61     3 
+[1] "Percentage for [has.devic.ct]"
+
+   FALSE     TRUE 
+0.953125 0.046875 
+[1] "===== Supplementary Table 1 Data ====="
+[1] "===== > "
+[1] "Counts for [CD3]"
+
+FALSE  TRUE 
+    1    46 
+[1] "Percentage for [CD3]"
+
+    FALSE      TRUE 
+0.0212766 0.9787234 
+[1] "===== > "
+[1] "Counts for [CD4]"
+
+FALSE  TRUE 
+    5     5 
+[1] "Percentage for [CD4]"
+
+FALSE  TRUE 
+  0.5   0.5 
+[1] "===== > "
+[1] "Counts for [CD8]"
+
+FALSE  TRUE 
+    8    11 
+[1] "Percentage for [CD8]"
+
+    FALSE      TRUE 
+0.4210526 0.5789474 
+[1] "===== > "
+[1] "Counts for [CD20]"
+
+FALSE  TRUE 
+   20     2 
+[1] "Percentage for [CD20]"
+
+     FALSE       TRUE 
+0.90909091 0.09090909 
+[1] "===== > "
+[1] "Counts for [CD56]"
+
+FALSE  TRUE 
+    3    48 
+[1] "Percentage for [CD56]"
+
+     FALSE       TRUE 
+0.05882353 0.94117647 
+[1] "===== > "
+[1] "Counts for [perforin]"
+
+TRUE 
+   8 
+[1] "Percentage for [perforin]"
+
+TRUE 
+   1 
+[1] "===== > "
+[1] "Counts for [GrB]"
+
+FALSE  TRUE 
+    1    21 
+[1] "Percentage for [GrB]"
+
+     FALSE       TRUE 
+0.04545455 0.95454545 
+[1] "===== > "
+[1] "Counts for [TIA.1]"
+
+TRUE 
+  22 
+[1] "Percentage for [TIA.1]"
+
+TRUE 
+   1 
+[1] "===== > "
+[1] "Counts for [EBER]"
+
+FALSE  TRUE 
+    1    43 
+[1] "Percentage for [EBER]"
+
+     FALSE       TRUE 
+0.02272727 0.97727273 
+[1] "===== > "
+[1] "Counts for [ebv.sero.status]"
+
+FALSE  TRUE 
+    1     6 
+[1] "Percentage for [ebv.sero.status]"
+
+    FALSE      TRUE 
+0.1428571 0.8571429 
+[1] "===== Run Linear Regression ====="
+Call:
+coxph(formula = Surv(time, status) ~ strata(age.tab1) + strata(Sex) + 
+    stage.numeric + has.surgical + has.ct + has.rt + has.vision.sx + 
+    has.eom.sx + has.lid.sx + has.ptosis + has.proptosis + has.orbital + 
+    has.intraocular + has.lacrimal.gland + has.lacrimal.drainage + 
+    has.conjunctival + has.nasosinus + has.cns, data = data, 
+    method = "exact")
+
+  n= 64, number of events= 48 
+
+                              coef exp(coef) se(coef)      z Pr(>|z|)   
+stage.numeric              0.52946   1.69801  0.25595  2.069  0.03858 * 
+has.surgicalTRUE           0.43717   1.54832  0.75905  0.576  0.56465   
+has.ctTRUE                -2.03728   0.13038  0.77640 -2.624  0.00869 **
+has.rtTRUE                -2.05491   0.12810  0.70470 -2.916  0.00355 **
+has.vision.sxTRUE          0.28846   1.33438  0.54757  0.527  0.59833   
+has.eom.sxTRUE             1.91241   6.76941  0.68725  2.783  0.00539 **
+has.lid.sxTRUE            -0.40715   0.66555  0.52959 -0.769  0.44202   
+has.ptosisTRUE             1.34176   3.82579  0.85222  1.574  0.11539   
+has.proptosisTRUE          1.85617   6.39915  0.58589  3.168  0.00153 **
+has.orbitalTRUE           -2.43254   0.08781  1.58945 -1.530  0.12591   
+has.intraocularTRUE       -1.16444   0.31210  1.77919 -0.654  0.51280   
+has.lacrimal.glandTRUE     0.80559   2.23803  0.98543  0.818  0.41364   
+has.lacrimal.drainageTRUE -3.23993   0.03917  1.35271 -2.395  0.01661 * 
+has.conjunctivalTRUE       2.65524  14.22834  1.44141  1.842  0.06546 . 
+has.nasosinusTRUE         -0.99775   0.36871  0.65113 -1.532  0.12544   
+has.cnsTRUE               -0.94975   0.38684  0.79332 -1.197  0.23124   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+                          exp(coef) exp(-coef) lower .95 upper .95
+stage.numeric               1.69801    0.58892  1.028192    2.8042
+has.surgicalTRUE            1.54832    0.64586  0.349748    6.8544
+has.ctTRUE                  0.13038    7.66969  0.028467    0.5972
+has.rtTRUE                  0.12810    7.80617  0.032190    0.5098
+has.vision.sxTRUE           1.33438    0.74941  0.456235    3.9027
+has.eom.sxTRUE              6.76941    0.14772  1.760185   26.0341
+has.lid.sxTRUE              0.66555    1.50252  0.235716    1.8792
+has.ptosisTRUE              3.82579    0.26138  0.719961   20.3298
+has.proptosisTRUE           6.39915    0.15627  2.029617   20.1758
+has.orbitalTRUE             0.08781   11.38776  0.003896    1.9793
+has.intraocularTRUE         0.31210    3.20412  0.009547   10.2032
+has.lacrimal.glandTRUE      2.23803    0.44682  0.324392   15.4405
+has.lacrimal.drainageTRUE   0.03917   25.53188  0.002764    0.5551
+has.conjunctivalTRUE       14.22834    0.07028  0.843766  239.9310
+has.nasosinusTRUE           0.36871    2.71218  0.102905    1.3211
+has.cnsTRUE                 0.38684    2.58506  0.081706    1.8315
+
+Concordance= 0.843  (se = 0.036 )
+Likelihood ratio test= 50.8  on 16 df,   p=2e-05
+Wald test            = 25.76  on 16 df,   p=0.06
+Score (logrank) test = 44.95  on 16 df,   p=1e-04
+
+[1] "===== Run Stepwise Regression and Symptom Correlation Analysis ====="
+Call:
+coxph(formula = Surv(time, status) ~ strata(age.tab1) + strata(Sex) + 
+    stage.numeric + has.ct + has.rt + has.eom.sx + has.ptosis + 
+    has.proptosis + has.orbital + has.lacrimal.drainage + has.conjunctival + 
+    has.nasosinus, data = data, method = "exact")
+
+  n= 64, number of events= 48 
+
+                              coef exp(coef) se(coef)      z Pr(>|z|)    
+stage.numeric              0.47878   1.61411  0.22036  2.173 0.029801 *  
+has.ctTRUE                -1.51178   0.22052  0.57249 -2.641 0.008274 ** 
+has.rtTRUE                -1.94115   0.14354  0.61367 -3.163 0.001560 ** 
+has.eom.sxTRUE             2.08423   8.03837  0.62362  3.342 0.000831 ***
+has.ptosisTRUE             1.25236   3.49858  0.78023  1.605 0.108468    
+has.proptosisTRUE          1.72376   5.60559  0.51253  3.363 0.000770 ***
+has.orbitalTRUE           -1.84059   0.15872  0.70460 -2.612 0.008995 ** 
+has.lacrimal.drainageTRUE -2.33470   0.09684  0.94707 -2.465 0.013694 *  
+has.conjunctivalTRUE       2.55569  12.88023  0.98451  2.596 0.009434 ** 
+has.nasosinusTRUE         -0.65578   0.51904  0.45819 -1.431 0.152363    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+                          exp(coef) exp(-coef) lower .95 upper .95
+stage.numeric               1.61411    0.61954   1.04800    2.4860
+has.ctTRUE                  0.22052    4.53478   0.07180    0.6773
+has.rtTRUE                  0.14354    6.96674   0.04311    0.4779
+has.eom.sxTRUE              8.03837    0.12440   2.36780   27.2892
+has.ptosisTRUE              3.49858    0.28583   0.75816   16.1444
+has.proptosisTRUE           5.60559    0.17839   2.05284   15.3070
+has.orbitalTRUE             0.15872    6.30027   0.03989    0.6315
+has.lacrimal.drainageTRUE   0.09684   10.32634   0.01513    0.6197
+has.conjunctivalTRUE       12.88023    0.07764   1.87027   88.7039
+has.nasosinusTRUE           0.51904    1.92664   0.21144    1.2741
+
+Concordance= 0.825  (se = 0.035 )
+Likelihood ratio test= 46.76  on 10 df,   p=1e-06
+Wald test            = 27.4  on 10 df,   p=0.002
+Score (logrank) test = 40.65  on 10 df,   p=1e-05
+
+              has.orbital has.lacrimal.drainage has.conjunctival has.nasosinus
+has.eom.sx     0.02233017                     1                1             1
+has.ptosis     1.00000000                     1                1             1
+has.proptosis  0.73231053                     1                1             1
+[1] "p-value for eom <> orbital correlation = 0.02233017"
+[1] "All done!"

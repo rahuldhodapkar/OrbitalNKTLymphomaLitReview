@@ -14,11 +14,11 @@ library(MASS)
 library(reshape2)
 
 ######## Create output scaffolding
-ifelse(!dir.exists("./fig"), dir.create("./fig"), FALSE)
-ifelse(!dir.exists("./fig/general"), dir.create("./fig/general"), FALSE)
+s <- ifelse(!dir.exists("./fig"), dir.create("./fig"), FALSE)
+s <- ifelse(!dir.exists("./fig/general"), dir.create("./fig/general"), FALSE)
 
-ifelse(!dir.exists("./calc"), dir.create("./calc"), FALSE)
-ifelse(!dir.exists("./calc/general"), dir.create("./calc/general"), FALSE)
+s <- ifelse(!dir.exists("./calc"), dir.create("./calc"), FALSE)
+s <- ifelse(!dir.exists("./calc/general"), dir.create("./calc/general"), FALSE)
 
 #################################################
 ## Helper Functions
@@ -287,8 +287,6 @@ ihc.markers <- ExtractMarkers(data$Immunohistochemistry,
 
 data <- cbind(data, ihc.markers)
 
-sum(rowSums(!is.na(as.matrix(ihc.markers))) == 0)
-
 # add EBV serology data
 ebv.sero.status <- rep(as.logical(NA), nrow(data))
 ebv.sero.status[grepl('Positive', data$SerologicalEBVStatus)] <- TRUE
@@ -385,9 +383,13 @@ surv_median(surv_fit(Surv(time, status) ~ 1, data=data))
 ################################################################################
 
 ## 
+print('===== Survival Number for Manuscript =====')
 print("Number of cases surviving at time of report writing or for >12mo:")
+print('sum(data$time >= 12 | !data$status)')
 sum(data$time >= 12 | !data$status)
+print('sum(data$time >= 6 | !data$status)')
 sum(data$time >= 6 | !data$status)
+print('sum(data$time >= 3 | !data$status)')
 sum(data$time >= 3 | !data$status)
 print("total number of cases:")
 nrow(data)
@@ -507,6 +509,14 @@ for (x in c('has.gelox.ct',
             'has.ceop.ct',
             'has.smile.ct',
             'has.devic.ct')) {
+  print('===== > ')
+  PrintDataForTable(data, x)
+}
+
+print('===== Supplementary Table 1 Data =====')
+for (x in c('CD3', 'CD4', 'CD8', 'CD20', 'CD56',
+            'perforin', 'GrB', 'TIA.1', 'EBER',
+            'ebv.sero.status')) {
   print('===== > ')
   PrintDataForTable(data, x)
 }
