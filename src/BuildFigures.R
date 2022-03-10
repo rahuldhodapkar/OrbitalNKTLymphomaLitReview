@@ -11,6 +11,7 @@ library(survminer)
 library(stringr)
 library(cowplot)
 library(MASS)
+library(reshape2)
 
 ######## Create output scaffolding
 ifelse(!dir.exists("./fig"), dir.create("./fig"), FALSE)
@@ -532,6 +533,13 @@ sx.vec <- c(
   "has.proptosis"
 )
 
+# consider only those symptoms that are included in the final model
+sx.vec <- c(
+  "has.eom.sx",
+  "has.ptosis",
+  "has.proptosis"
+)
+
 loc.vec <- c(
   "has.orbital",
   "has.intraocular",
@@ -540,6 +548,14 @@ loc.vec <- c(
   "has.conjunctival",
   "has.nasosinus",
   "has.cns"
+)
+
+# consider only those locations included in the final model
+loc.vec <- c(
+  "has.orbital",
+  "has.lacrimal.drainage",
+  "has.conjunctival",
+  "has.nasosinus"
 )
 
 # show significant correlation between tumor location and reported symptoms.
@@ -571,6 +587,22 @@ fisher.p.adj <- fisher.p %>%
     dimnames = list(sx.vec, loc.vec), byrow = FALSE)
 fisher.p.adj
 
+cor.val.df <- melt(cor.val)
+fisher.p.adj.df <- melt(fisher.p.adj)
+
+# plot correlation, along with significance data.
+ggplot(cor.val.df, aes(x=Var1, y=Var2, fill=value)) +
+  geom_tile(color = "black") +
+  scale_fill_gradient2(low = "#075AFF",
+                       mid = "#FFFFCC",
+                       high = "#FF0000") +
+  geom_point(
+    data=subset(fisher.p.adj.df, value < 0.05),
+    aes(x=Var1, y=Var2, fill=value),
+    shape=8
+  ) +
+  theme_cowplot()
+
 print("===== all specific CT regimens =====")
 res.cox.spec.ct <- coxph(
   formula=Surv(time, status) ~
@@ -588,4 +620,3 @@ res.cox.spec.ct <- coxph(
 step.model.spec.ct <- stepAIC(res.cox.spec.ct, direction = "backward", 
                       trace = FALSE)
 summary(step.model.spec.ct)
-
