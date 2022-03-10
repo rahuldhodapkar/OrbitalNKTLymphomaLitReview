@@ -140,6 +140,7 @@ has.devic.ct <- c()
 
 has.rt <- c()
 has.localized.rt <- c()
+has.total.body.rt <- c()
 
 for (i in 1:nrow(data)) {
     loc.str <- data$Treatment[[i]]
@@ -171,12 +172,17 @@ for (i in 1:nrow(data)) {
 
     has.localized.rt <- c(has.localized.rt, 
         any(str_detect(unlist(loc.toks), pattern=c('localized rt'))))
+    has.total.body.rt <- c(has.total.body.rt, 
+        any(str_detect(unlist(loc.toks), pattern=c('total body rt'))))
 }
 data$has.surgical <- has.surgical
 data$has.orbitotomy.surgical <- has.orbitotomy.surgical
+data$has.unspecified.surgical <- (
+  (data$has.orbitotomy.surgical 
+  - data$has.surgical) == -1
+)
 
 data$has.ct <- has.ct
-
 data$has.gelox.ct <- has.gelox.ct
 data$has.dhap.ct <- has.dhap.ct
 data$has.methotrexate.ct <- has.methotrexate.ct
@@ -184,9 +190,25 @@ data$has.chop.ct <- has.chop.ct
 data$has.ceop.ct <- has.ceop.ct
 data$has.smile.ct <- has.smile.ct
 data$has.devic.ct <- has.devic.ct
+data$has.unspecified.ct <- (
+  ((data$has.gelox.ct
+    | data$has.dhap.ct
+    | data$has.methotrexate.ct
+    | data$has.chop.ct
+    | data$has.ceop.ct
+    | data$has.smile.ct
+    | data$has.devic.ct)
+   - data$has.ct) == -1
+)
 
 data$has.rt <- has.rt
 data$has.localized.rt <- has.localized.rt
+data$has.total.body.rt <- has.total.body.rt
+data$has.unspecified.rt <- (
+  ((data$has.localized.rt
+    | data$has.total.body.rt)
+   - data$has.rt) == -1
+)
 
 # extract ocular symptoms
 has.vision.sx <- c()
@@ -273,23 +295,24 @@ ebv.sero.status[grepl('Positive', data$SerologicalEBVStatus)] <- TRUE
 ebv.sero.status[grepl('Negative', data$SerologicalEBVStatus)] <- FALSE
 data$ebv.sero.status <- ebv.sero.status
 
-########
+################################################################################
 ## Persist cleaned data to CSV
-########
+################################################################################
 
 write.csv(data, file='./calc/general/cleaned_data.csv', row.names=FALSE)
 message('cleaned data persisted at `./calc/general/cleaned_data.csv`')
 
-#####
+################################################################################
 # PRISMA diagram
-#####
+################################################################################
 
 prisma.data <- read.csv('./data/deduplicated_searches.csv')
+print('===== Data Exclusion Reason for PRISMA Diagram =====')
 table(prisma.data$ExclusionReason)
 
-#####
+################################################################################
 # AGE OF ONSET HISTOGRAM
-#####
+################################################################################
 
 age.to.bin.map <- hashmap(
     c(
@@ -332,9 +355,9 @@ ggplot(data, aes(x=Age, fill=Sex)) +
 ggplot(data, aes(x=Age, fill=Sex)) + 
     geom_density(alpha=0.5)
 
-#####
+################################################################################
 # KAPLAN-MEIER SURVIVAL ANALYSIS
-#####
+################################################################################
 
 # https://www.emilyzabor.com/tutorials/survival_analysis_in_r_tutorial.html
 # status FALSE := censored, TRUE := dead
@@ -354,10 +377,12 @@ km.plots <- ggsurvplot(
 km.plots[[1]] + background_grid()
 ggsave('./fig/general/kaplan_meier_all.png', height=8.5, width=8)
 
+print('===== Overall Median Survival =====')
 surv_median(surv_fit(Surv(time, status) ~ 1, data=data))
-#####
+
+################################################################################
 # Additional Analysis for manuscript
-#####
+################################################################################
 
 ## 
 print("Number of cases surviving at time of report writing or for >12mo:")
@@ -367,72 +392,16 @@ sum(data$time >= 3 | !data$status)
 print("total number of cases:")
 nrow(data)
 
-## Cox-proportional hazards to identify factors assoc. with favorable prognosis
-
-res.cox <- coxph(
-    formula=Surv(time, status) ~ nktl.region.rate == 'Asia',
-    data = data,
-    method = 'exact')
-summary(res.cox)
-
-
-res.cox <- coxph(
-    formula=Surv(time, status) ~ Age + Sex + nktl.region.rate,
-    data = data,
-    method = 'exact')
-summary(res.cox)
-
-ggsurvplot(
-    fit = surv_fit(Surv(time, status) ~ (
-        nktl.region.rate == 'Asia'
-    ), data=data),
-    xlab = "Months",
-    ylab = "Overall Survival Probability")
-
-ggsurvplot(
-    fit = surv_fit(Surv(time, status) ~ (
-        has.smile.ct
-    ), data=subset(data, xor(has.chop.ct, has.smile.ct))),
-    xlab = "Months",
-    ylab = "Overall Survival Probability")
-
-ggsurvplot(
-  fit = surv_fit(Surv(time, status) ~ 
-    stage.numeric, data=data),
-  xlab = "Months",
-  ylab = "Overall Survival Probability",
-  xlim = c(1,12))
-
-km.plots <- ggsurvplot(
-    fit = surv_fit(Surv(time, status) ~ has.smile.ct,
-        data=subset(data, xor(has.chop.ct, has.smile.ct))),
-    #pval = TRUE, conf.int = TRUE,
-    xlab = "Months",
-    xlim = c(1,23),
-    break.x.by = 3,
-    ylab = "Overall Survival Probability",
-    risk.table=TRUE)
-
-km.plots[[1]] + background_grid()
-ggsave('./fig/general/kaplan_meier_chop_smile.png', height=8.5, width=8)
-
-survdiff(Surv(time, status) ~ has.smile.ct,
-    data=subset(data, xor(has.chop.ct, has.smile.ct)))
-
-surv_median(surv_fit(Surv(time, status) ~ has.smile.ct,
-    data=subset(data, xor(has.chop.ct, has.smile.ct))))
-
-surv_median(
-    surv_fit(Surv(time, status) ~ has.smile.ct,
-    data=data))
-surv_median(
-    surv_fit(Surv(time, status) ~ has.chop.ct,
-    data=data))
-
-
 #####
 # Collate Data for Table 1
 #####
+
+PrintDataForTable <- function(df, col.name) {
+  print(paste0('Counts for [', col.name, ']'))
+  print(table(data[,col.name]))
+  print(paste0('Percentage for [', col.name, ']'))
+  print(table(data[,col.name]) / sum(table(data[,col.name])))
+}
 
 # Age
 #<44,45-64,65+
@@ -453,51 +422,99 @@ data$age.tab1 <- factor(
     levels=c('<40','40-64', '65+'),
     ordered=TRUE)
 
-
-table(data$age.tab1)
-
-table(data$age.tab1) / sum(table(data$age.tab1))
-
+print('===== Age Table Data =====')
+PrintDataForTable(data, 'age.tab1')
 
 # Sex
-table(data$Sex)
-table(data$Sex) / sum(table(data$Sex))
+print('===== Sex Table Data =====')
+PrintDataForTable(data, 'Sex')
 
+print('t-test for sex: ')
 t.test(data$Age[data$Sex == 'M'],
        data$Age[data$Sex == 'F'],
        paired=FALSE)
 
 # Region
+print('===== Region Table Data =====')
+PrintDataForTable(data, 'GeographicLocation')
 
 # Symptoms
-table(data$has.vision.sx)
-table(data$has.eom.sx)
-table(data$has.lid.sx)
-table(data$has.ptosis)
-table(data$has.proptosis)
+print('===== Symptoms Table Data =====')
+sx.vec <- c(
+  "has.vision.sx",
+  "has.eom.sx",
+  "has.lid.sx",
+  "has.ptosis",
+  "has.proptosis"
+)
+for (s in sx.vec) {
+  print('===== > ')
+  PrintDataForTable(data, s)
+}
 
 # Tumor Location
-table(data$has.orbital)
-table(data$has.intraocular)
-table(data$has.lacrimal)
-table(data$has.conjunctival)
+print('===== Tumor Location Table Data =====')
+loc.vec <- c(
+  "has.orbital",
+  "has.intraocular",
+  "has.lacrimal.gland",
+  "has.lacrimal.drainage",
+  "has.conjunctival",
+  "has.nasosinus",
+  "has.cns"
+)
+for (l in loc.vec) {
+  print('===== > ')
+  PrintDataForTable(data, l)
+}
 
-table(data$has.nasosinus)
-table(data$has.cns)
+# Ki67
+print('===== Ki67 Table Data =====')
+data$Ki67.binned <- sapply(data$Ki67, function(x) {
+  if (is.na(x)) {
+    return(NA)
+  } else {
+    if      (x < 0.5)             { return ('Ki67 < 0.5') }
+    else if (x >= 0.5 && x < 0.8) { return ('0.5 <= Ki67 < 0.8') }
+    else if (x >= 0.8)            { return ('0.8 <= Ki67') }
+    else                          { stop('Invalid Ki67 Value!') }
+  }
+})
+PrintDataForTable(data, 'Ki67.binned')
 
 # Therapy
-table(data$Ki67 < 0.2)
+print('===== Therapy Table Data =====')
 
-table(data$Ki67 >= 0.2 & data$Ki67 < 0.8)
+PrintDataForTable(data, 'has.surgical')
+for (x in c('has.orbitotomy.surgical', 'has.unspecified.surgical')) {
+  print('===== > ')
+  PrintDataForTable(data, x)
+}
 
-table(data$Ki67 >= 0.8)
+PrintDataForTable(data, 'has.rt')
+for (x in c('has.localized.rt',
+            'has.total.body.rt',
+            'has.unspecified.rt')) {
+  print('===== > ')
+  PrintDataForTable(data, x)
+}
+
+PrintDataForTable(data, 'has.ct')
+for (x in c('has.gelox.ct',
+            'has.dhap.ct',
+            'has.methotrexate.ct',
+            'has.chop.ct',
+            'has.ceop.ct',
+            'has.smile.ct',
+            'has.devic.ct')) {
+  print('===== > ')
+  PrintDataForTable(data, x)
+}
 
 #######
 ## Multivariate Cox Regression
 #######
-data$is.asia <- data$nktl.region.rate == 'Asia'
-data$is.stage4 <- data$stage.numeric > 3
-
+print('===== Run Linear Regression =====')
 res.cox <- coxph(
     formula=Surv(time, status) ~
         strata(age.tab1) + # Demo
@@ -520,34 +537,24 @@ res.cox <- coxph(
         has.cns,
     data = data,
     method = 'exact')
+summary(res.cox)
 
+#
+# For the correlation analsis between symptoms and tumor location, a
+# backward stepwise linear regression using the `stepAIC` function
+# from the `MASS` R package (https://www.stats.ox.ac.uk/pub/MASS4/)
+#
+
+print('===== Run Stepwise Regression and Symptom Correlation Analysis =====')
 step.model <- stepAIC(res.cox, direction = "backward", 
                       trace = FALSE)
 summary(step.model)
-
-sx.vec <- c(
-  "has.vision.sx",
-  "has.eom.sx",
-  "has.lid.sx",
-  "has.ptosis",
-  "has.proptosis"
-)
 
 # consider only those symptoms that are included in the final model
 sx.vec <- c(
   "has.eom.sx",
   "has.ptosis",
   "has.proptosis"
-)
-
-loc.vec <- c(
-  "has.orbital",
-  "has.intraocular",
-  "has.lacrimal.gland",
-  "has.lacrimal.drainage",
-  "has.conjunctival",
-  "has.nasosinus",
-  "has.cns"
 )
 
 # consider only those locations included in the final model
@@ -601,22 +608,12 @@ ggplot(cor.val.df, aes(x=Var1, y=Var2, fill=value)) +
     aes(x=Var1, y=Var2, fill=value),
     shape=8
   ) +
-  theme_cowplot()
+  theme_cowplot() +
+  theme(
+    axis.title.x=element_blank(),
+    axis.title.y=element_blank()
+  )
+ggsave('./fig/general/symptom_location_correlation.png', width=8, height = 8)
+print('p-value for eom <> orbital correlation = 0.02233017')
 
-print("===== all specific CT regimens =====")
-res.cox.spec.ct <- coxph(
-  formula=Surv(time, status) ~
-    strata(age.tab1) + # Demo
-    strata(Sex) +
-    strata(stage.numeric) +
-    has.chop.ct +
-    has.methotrexate.ct +
-    has.smile.ct +
-    has.dhap.ct +
-    has.ceop.ct +
-    has.devic.ct,
-  data = data,
-  method = 'exact')
-step.model.spec.ct <- stepAIC(res.cox.spec.ct, direction = "backward", 
-                      trace = FALSE)
-summary(step.model.spec.ct)
+print('All done!')
