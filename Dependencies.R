@@ -33,3 +33,8 @@ install.packages("tidyverse")
 install.packages("caret")
 install.packages("leaps")
 install.packages("reshape2")
+install.packages("SurvMI")
+install.packages('mice')
+install.packages('mitools')
+install.packages('ComplexHeatmap')
+
