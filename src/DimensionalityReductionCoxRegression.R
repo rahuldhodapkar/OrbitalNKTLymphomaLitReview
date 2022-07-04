@@ -12,6 +12,7 @@ library(ComplexHeatmap)
 library(viridis)
 library(cowplot)
 library(ggrepel)
+library(RColorBrewer)
 
 ######## Create output scaffolding
 s <- ifelse(!dir.exists("./fig"), dir.create("./fig"), FALSE)
@@ -130,65 +131,8 @@ data.puddlr <- data
 ## BUILD Complex Heatmap
 ################################################################################
 
-data <- read.csv('./data/SystematicReviewMachineReadableDatasheet.csv')
-
-stage.numeric <- sapply(str_match(data$Dx_AnnArborStage, '^([IV]*)')[,1], function(x) {
-  if (x == 'I') {
-    return(1)
-  } else if (x == 'II') {
-    return(2)
-  } else if (x == 'III') {
-    return(3)
-  } else if (x == 'IV') {
-    return(4)
-  } else{ 
-    stop('Invalid Ann Arbor Stage provided in column "AnnArborStageInferred"')
-  }
-}, USE.NAMES=FALSE)
-
-data$Dx_AnnArborStageNumeric <- stage.numeric
-data$Dx_IsLateStage <- stage.numeric >= 3
-
-data$status <- (!str_starts(data$Surv_TimeMonths, ">"))
-data$time <- data$Surv_TimeMonths %>%
-  str_replace(">", "") %>%
-  as.integer()
-
-data$Demo_IsAdvancedAge <- as.numeric(data$Demo_Age) > 65
-data$Demo_IsMale <- ifelse(data$Demo_Sex == 'M', 1, 0)
-
-chemo.tx.cols <- c('Tx_Chemotherapy_CHOP',
-                   'Tx_Chemotherapy_Methotrexate',
-                   'Tx_Chemotherapy_SMILE',
-                   'Tx_Chemotherapy_DHAP',
-                   'Tx_Chemotherapy_CEOP',
-                   'Tx_Chemotherapy_DeVIC',
-                   'Tx_Chemotherapy_GELOX')
-
-for (c in chemo.tx.cols) {
-  data[,c] <- ifelse(data[,c] == 'YES', 1, 0)
-}
-
-data$Tx_Chemotherapy_Non_L_Asp <- (data$Tx_Chemotherapy_CHOP 
-                                   | data$Tx_Chemotherapy_CEOP 
-                                   | data$Tx_Chemotherapy_DeVIC
-                                   | data$Tx_Chemotherapy_DHAP)
-
-data$Tx_Chemotherapy_L_Asp <- (data$Tx_Chemotherapy_SMILE
-                               | data$Tx_Chemotherapy_GELOX
-                               | data$Tx_Chemotherapy_Other == 'L_ASPARAGINASE')
-
-data$Loc_IsRecurrence <- data$Loc_TumorPrimaryVRecurrence == 'RECURRENCE'
-data$Dx_GTE_3Mo_Misdiagnosis <- as.numeric(data$Dx_Misdiagnosis_TimeToDiagnosis) > 3
-data$Dx_GTE_3Mo_Misdiagnosis[is.na(data$Dx_GTE_3Mo_Misdiagnosis)] <- FALSE
-
-data$Dx_IHC_Ki67_GTE_80 <- as.numeric(as.numeric(data$Dx_IHC_Ki67) >= 0.8)
-
-meta.data <- data[,c(
-  'status', 'time',
-  'Demo_Age',
-  'Demo_Sex'
-)]
+data <- readRDS('./calc/general/data.rds')
+meta.data <- readRDS('./calc/general/meta_data.rds')
 
 data <- data[,
              c('Sx_VisionLoss',
@@ -357,9 +301,50 @@ dev.off()
 ## PCA and Cox Regression
 ################################################################################
 
+data <- readRDS('./calc/general/data.rds')
+meta.data <- readRDS('./calc/general/meta_data.rds')
+
+data <- data[,
+             c('Dx_IsLateStage',
+               'Tx_Chemotherapy_L_Asp',
+               'Tx_Chemotherapy',
+               'Tx_Radiotherapy',
+               'Tx_Surgical',
+               'Sx_VisionLoss',
+               'Sx_RestrictedEOM',
+               'Sx_PeriorbitalSwelling',
+               'Sx_Chemosis',
+               'Sx_Proptosis',
+               'Sx_EyelidSwelling',
+               'Sx_Ptosis',
+               'Loc_IsRecurrence',
+               'Loc_OrbitalLocationOrbital',
+               'Loc_OrbitalLocationLacrimalGland',
+               'Loc_OrbitalLocationLacrimalDrainage',
+               'Loc_OrbitalLocationConjunctival',
+               'Loc_OrbitalLocationUveal',
+               'Loc_OrbitalIntraocularExtension',
+               'Loc_OrbitalLocationEyelid',
+               'Loc_LocationNasosinus',
+               'Loc_LocationCNS')
+]
+
+for (c in colnames(data)) {
+  if (typeof(data[,c]) == 'logical') {
+    next
+  } else if (typeof(data[,c]) == 'double') {
+    next
+  }
+  data[,c] <- data[,c] == 'YES'
+}
+
+for (c in colnames(data)) {
+  data[,c] <- as.numeric(data[,c])
+}
+
 # need to set full set of predictors
 
-data.matrix <- as.matrix(data.puddlr)
+data.matrix <- as.matrix(data)
 rownames(data.matrix) <- 1:nrow(data.matrix)
 
 puddlr.obj <- CreatePuddlrObject(meta.data$time, data.matrix)
@@ -493,7 +478,12 @@ stats.df <- data.frame(
 stats.df$ZScore <- stats.df$GLMEstimate / stats.df$StdErr
 stats.df$PValue <- 2*pnorm(-abs(stats.df$ZScore))
 
+# generate hazard ratios
+stats.df$HazardRatioEstimate <- exp(stats.df$GLMEstimate)
+stats.df$Low95CI <- exp(stats.df$GLMEstimate - 1.96 * stats.df$StdErr)
+stats.df$Hi95CI <- exp(stats.df$GLMEstimate + 1.96 * stats.df$StdErr)
 
+write.csv(stats.df, './calc/dimreduc/constrained_cox_model.csv', row.names=F)
 
 # create volcano plot
 

@@ -13,6 +13,7 @@ library(stringr)
 library(cowplot)
 library(MASS)
 library(reshape2)
+library(mice)
 
 ######## Create output scaffolding
 s <- ifelse(!dir.exists("./fig"), dir.create("./fig"), FALSE)
@@ -22,80 +23,11 @@ s <- ifelse(!dir.exists("./calc"), dir.create("./calc"), FALSE)
 s <- ifelse(!dir.exists("./calc/general"), dir.create("./calc/general"), FALSE)
 
 ################################################################################
-## LOAD DATA
-################################################################################
-
-data <- read.csv('./data/SystematicReviewMachineReadableDatasheet.csv')
-
-################################################################################
-## CLEAN DATA
-################################################################################
-
-stage.numeric <- sapply(str_match(data$Dx_AnnArborStage, '^([IV]*)')[,1], function(x) {
-  if (x == 'I') {
-    return(1)
-  } else if (x == 'II') {
-    return(2)
-  } else if (x == 'III') {
-    return(3)
-  } else if (x == 'IV') {
-    return(4)
-  } else{ 
-    stop('Invalid Ann Arbor Stage provided in column "AnnArborStageInferred"')
-  }
-}, USE.NAMES=FALSE)
-
-data$Dx_AnnArborStageNumeric <- stage.numeric
-
-data$status <- (!str_starts(data$Surv_TimeMonths, ">"))
-data$time <- data$Surv_TimeMonths %>%
-  str_replace(">", "") %>%
-  as.integer()
-
-
-numeric.cols <- c(
-  'Dx_Misdiagnosis_TimeToDiagnosis'
-  , 'Tx_MaxRadiotherapyDoseGy'
-  , 'Demo_Age'
-  , 'Meta_ReportYear'
-)
-
-for (c in numeric.cols) {
-  data[,c] <- as.numeric(data[,c])
-}
-
-chemo.tx.cols <- c('Tx_Chemotherapy_CHOP',
-                   'Tx_Chemotherapy_Methotrexate',
-                   'Tx_Chemotherapy_SMILE',
-                   'Tx_Chemotherapy_DHAP',
-                   'Tx_Chemotherapy_CEOP',
-                   'Tx_Chemotherapy_DeVIC',
-                   'Tx_Chemotherapy_GELOX')
-
-for (c in chemo.tx.cols) {
-  data[,c] <- ifelse(data[,c] == 'YES', 1, 0)
-}
-
-for (c in chemo.tx.cols) {
-  print(c)
-  print(var(data[,c]))
-}
-
-data$Tx_Chemotherapy_Non_L_Asp <- (data$Tx_Chemotherapy_CHOP 
-                                            | data$Tx_Chemotherapy_CEOP 
-                                            | data$Tx_Chemotherapy_DeVIC
-                                            | data$Tx_Chemotherapy_DHAP)
-
-data$Tx_Chemotherapy_L_Asp <- (data$Tx_Chemotherapy_SMILE
-                                        | data$Tx_Chemotherapy_GELOX
-                                        | data$Tx_Chemotherapy_Other == 'L_ASPARAGINASE')
-
-
-
-
-################################################################################
 ## Run Cox Proportional Hazards Regression
 ################################################################################
+
+data <- readRDS('./calc/general/data.rds')
+meta.data <- readRDS('./calc/general/meta_data.rds')
 
 tx.surv.data <- data
 tx.surv.data$L_Asp_Only <- (tx.surv.data$Tx_Chemotherapy_L_Asp
@@ -118,6 +50,22 @@ km.plots <- ggsurvplot(
 km.plots[[1]] + background_grid()
 
 
+# plot survival by Ann Arbor Stage
+km.plots <- ggsurvplot(
+  fit = surv_fit(Surv(time, status) ~ Dx_AnnArborStageNumeric >= 3, data=data),
+  xlab = "Months",
+  xlim = c(1,23),
+  break.x.by = 3,
+  ylab = "Overall Survival Probability",
+  risk.table=TRUE,
+  conf.int=FALSE,
+  pval=TRUE,
+  pval.method=TRUE)
+
+km.plots[[1]] + background_grid()
+
+
+print('===== BEGIN Model 1 =====')
 
 res.cox <- coxph(
   formula=Surv(time, status) ~
@@ -128,7 +76,9 @@ res.cox <- coxph(
   method = 'exact')
 summary(res.cox)
 
+print('===== End Model 1 =====')
 
+print('===== BEGIN Model 2 =====')
 
 res.cox <- coxph(
   formula=Surv(time, status) ~
@@ -140,6 +90,9 @@ res.cox <- coxph(
   method = 'exact')
 summary(res.cox)
 
+print('===== End Model 2 =====')
+
+print('===== BEGIN Model 3 =====')
 
 res.cox <- coxph(
   formula=Surv(time, status) ~
@@ -151,7 +104,9 @@ res.cox <- coxph(
   method = 'exact')
 summary(res.cox)
 
+print('===== END Model 3 =====')
 
+print('===== BEGIN Model 4 =====')
 
 res.cox <- coxph(
   formula=Surv(time, status) ~
@@ -167,6 +122,10 @@ res.cox <- coxph(
   method = 'exact')
 summary(res.cox)
 
+print('===== END Model 4 =====')
+
+
+print('===== BEGIN Model 5 =====')
 
 # no sx significant after stratification for ann arbor staging
 res.cox <- coxph(
@@ -184,6 +143,9 @@ res.cox <- coxph(
   method = 'exact')
 summary(res.cox)
 
+print('===== END Model 5 =====')
+
+print('===== BEGIN Model 6 =====')
 
 # no locations significant after stratification for ann arbor staging
 res.cox <- coxph(
@@ -203,6 +165,9 @@ res.cox <- coxph(
   method = 'exact')
 summary(res.cox)
 
+print('===== END Model 6 =====')
+
+print('===== BEGIN Model 7 =====')
 
 res.cox <- coxph(
   formula=Surv(time, status) ~
@@ -235,10 +200,15 @@ res.cox <- coxph(
   data = data,
   method = 'exact')
 summary(res.cox)
+print('===== END Model 6 =====')
+
 
 ################################################################################
 ## Run Cox Proportional Hazards Regression with Multiple Imputation
 ################################################################################
+
+data <- readRDS('./calc/general/data.rds')
+meta.data <- readRDS('./calc/general/meta_data.rds')
 
 #
 # Cox Regression with Multiple Imputation for IHC data.
@@ -277,52 +247,163 @@ models <- with(dat, coxph(formula=Surv(time, status) ~
                             Dx_IHC_Perforin +
                             Dx_IHC_EBER +
                             Dx_IHC_Ki67))
+
+print('===== BEGIN Pooled Models with Multiple Imputation =====')
 summary(pool(models))
+print('===== END Pooled Models with Multiple Imputation =====')
+
+################################################################################
+## Run Basic Statistics
+################################################################################
+
+data <- readRDS('./calc/general/data.rds')
+meta.data <- readRDS('./calc/general/meta_data.rds')
 
 
+survfit(Surv(time, status) ~ 1, data = data) 
+mean(data$time, na.rm=T)
+sd(data$time, na.rm=T)
 
+
+# Age
+sum(data$Demo_Age < 40)
+sum(data$Demo_Age >= 40 & data$Demo_Age < 65 )
+sum(data$Demo_Age >= 65)
+
+mean(data$Demo_Age)
+sd(data$Demo_Age)
+
+t.test(data$Demo_Age[data$Demo_Sex == 'M'],
+       data$Demo_Age[data$Demo_Sex == 'F'])
+
+for (c in colnames(data)[str_detect(colnames(data), '^Sx')]) {
+  print(paste0('===== BEGIN ', c, ' ====='))
+  print(table(data[,c]))
+  print(table(data[,c]) / sum(!is.na(data[,c])))
+  print(paste0('===== END ', c, ' ====='))
+}
+
+for (c in colnames(data)[str_detect(colnames(data), '^Loc')]) {
+  print(paste0('===== BEGIN ', c, ' ====='))
+  print(table(data[,c]))
+  print(table(data[,c]) / sum(!is.na(data[,c])))
+  print(paste0('===== END ', c, ' ====='))
+}
+
+
+for (c in colnames(data)[str_detect(colnames(data), '^Dx')]) {
+  print(paste0('===== BEGIN ', c, ' ====='))
+  print(table(data[,c]))
+  print(table(data[,c]) / sum(!is.na(data[,c])))
+  print(paste0('===== END ', c, ' ====='))
+}
+
+ihc.cols <- colnames(data)[
+  str_detect(colnames(data), "^Dx_IHC")]
+ihc.data <- data[,ihc.cols]
+num.nonempty.rows <- 0
+for (i in 1:nrow(ihc.data)) {
+  for (j in 1:ncol(ihc.data)) {
+    if (! (is.na(ihc.data[i,j]) || ihc.data[i,j] == '') ) {
+      num.nonempty.rows <- num.nonempty.rows + 1
+      break
+    }
+  }
+}
+
+table(data$Dx_AnnArborStageNumeric)
+
+sum(data$Dx_IHC_Ki67 < 0.5, na.rm=T)
+sum(data$Dx_IHC_Ki67 >= 0.5 & data$Dx_IHC_Ki67 < 0.8, na.rm=T)
+sum(data$Dx_IHC_Ki67 >= 0.8, na.rm=T)
+
+
+for (c in colnames(data)[str_detect(colnames(data), '^Tx_Surgical')]) {
+  print(paste0('===== BEGIN ', c, ' ====='))
+  print(table(data[,c]))
+  print(table(data[,c]) / sum(!is.na(data[,c])))
+  print(paste0('===== END ', c, ' ====='))
+}
+
+for (c in colnames(data)[str_detect(colnames(data), '^Tx_Radiotherapy')]) {
+  print(paste0('===== BEGIN ', c, ' ====='))
+  print(table(data[,c]))
+  print(table(data[,c]) / sum(!is.na(data[,c])))
+  print(paste0('===== END ', c, ' ====='))
+}
+
+for (c in colnames(data)[str_detect(colnames(data), '^Tx_Chemotherapy')]) {
+  print(paste0('===== BEGIN ', c, ' ====='))
+  print(table(data[,c]))
+  print(table(data[,c]) / sum(!is.na(data[,c])))
+  print(paste0('===== END ', c, ' ====='))
+}
+
+sum(data$Tx_Chemotherapy_Other != 'NO')
+
+# survival numbers
+
+sum(data$time < 3, na.rm=T)
+sum(data$time >= 3 & data$time < 6, na.rm=T)
+sum(data$time >= 6 & data$time < 12, na.rm=T)
+sum(data$time >= 12, na.rm=T)
+
+sum(data$time >= 3, na.rm=T)
+sum(data$time >= 6, na.rm=T)
+sum(data$time >= 12, na.rm=T)
+
+# misdiagnosis
+misdiag.cols <- colnames(data)[
+  str_detect(colnames(data), "^Dx_Misdiagnosis")]
+misdiag.data <- data[,misdiag.cols]
+num.nonempty.rows <- 0
+for (i in 1:nrow(misdiag.data)) {
+  for (j in 1:ncol(misdiag.data)) {
+    if (! (is.na(misdiag.data[i,j]) || misdiag.data[i,j] == '') ) {
+      num.nonempty.rows <- num.nonempty.rows + 1
+      break
+    }
+  }
+}
+
+sum(data$Dx_Misdiagnosis_InitialDiagnosisCellulitis == 'YES')
+sum(data$Dx_Misdiagnosis_InitialDiagnosisSinusitis == 'YES')
+sum(data$Dx_Misdiagnosis_InitialDiagnosisUveitis == 'YES')
+sum(data$Dx_Misdiagnosis_InitialDiagnosisPseudotumor== 'YES')
+
+################################################################################
+## CHOP vs L-Asparaginase Chemotherapy
+################################################################################
+
+data <- readRDS('./calc/general/data.rds')
+meta.data <- readRDS('./calc/general/meta_data.rds')
+
+data <- data[xor(data$Tx_Chemotherapy_CHOP, data$Tx_Chemotherapy_L_Asp),]
+
+km.plots <- ggsurvplot(
+  fit = surv_fit(Surv(time, status) ~ strata(Dx_AnnArborStageNumeric >= 3) + Tx_Chemotherapy_CHOP, data=data),
+  xlab = "Months",
+  xlim = c(1,23),
+  break.x.by = 3,
+  ylab = "Overall Survival Probability",
+  risk.table=TRUE,
+  conf.int=FALSE,
+  pval=TRUE,
+  pval.method=TRUE)
+
+km.plots[[1]] + background_grid()
+
+survfit(Surv(time, status) ~ Tx_Chemotherapy_CHOP, data = data) 
 
 
 res.cox <- coxph(
-  formula=Surv(time, status) ~ 
-    Dx_AnnArborStageNumeric +
-    Demo_Age +
-    Demo_Sex +
-    Demo_Ethnicity +
-    Sx_VisionLoss	+
-    Sx_VisionWorseThan20200 +
-    Sx_RestrictedEOM +
-    Sx_PeriorbitalSwelling +
-    Sx_Chemosis +
-    Sx_Proptosis +
-    Sx_EyelidSwelling +
-    Sx_Ptosis +
-    Loc_OrbitalLocationOrbital +
-    Loc_OrbitalLocationLacrimalGland +
-    Loc_OrbitalLocationLacrimalDrainage +
-    Loc_OrbitalLocationConjunctival +
-    Loc_OrbitalLocationUveal +
-    Loc_OrbitalIntraocularExtension +
-    Loc_OrbitalLocationEyelid +
-    Loc_LocationNasosinus +
-    Loc_LocationCNS +
-    Tx_Surgical +
-    Tx_Surgical_FESS +
-    Tx_Surgical_Orbitotomy +
-    Tx_Chemotherapy +
-    Tx_Chemotherapy_CHOP +
-    Tx_Chemotherapy_Methotrexate +
-    Tx_Chemotherapy_SMILE +
-    Tx_Chemotherapy_DHAP +
-    Tx_Chemotherapy_CEOP +
-    Tx_Chemotherapy_DeVIC +
-    Tx_Chemotherapy_GELOX +
-    Tx_Radiotherapy +
-    Tx_Radiotherapy_Localized +
-    Tx_MaxRadiotherapyDoseGy +
-    Tx_Radiotherapy_WholeBody,
+  formula=Surv(time, status) ~
+    Tx_Chemotherapy_CHOP,
   data = data,
   method = 'exact')
+summary(res.cox)
+
+
 
 
 print('All done!')
