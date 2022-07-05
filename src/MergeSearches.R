@@ -6,7 +6,6 @@
 #
 
 library(stringr)
-library(hashmap)
 
 ######## Create output scaffolding
 ifelse(!dir.exists("./calc"), dir.create("./calc"), FALSE)
@@ -34,9 +33,9 @@ dedup.data <- data.frame(
     PMID = unique(search.data$PMID)
 )
 
-dedup.data$Title <-            hashmap(search.data$PMID, search.data$Title)[[dedup.data$PMID]]
-dedup.data$Publication.Year <- hashmap(search.data$PMID, search.data$Publication.Year)[[dedup.data$PMID]]
-dedup.data$Authors <-          hashmap(search.data$PMID, search.data$Authors)[[dedup.data$PMID]]
+dedup.data$Title <-            search.data$Title[match(dedup.data$PMID, search.data$PMID)]
+dedup.data$Publication.Year <- search.data$Publication.Year[match(dedup.data$PMID, search.data$PMID)]
+dedup.data$Authors <-          search.data$Authors[match(dedup.data$PMID, search.data$PMID)]
 
 write.csv(dedup.data, './calc/deduplicated_searches.csv', row.names=F)
 

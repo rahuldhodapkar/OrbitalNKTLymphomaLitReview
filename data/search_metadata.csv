@@ -1,5 +1,15 @@
 filename,search
-search1.csv,"NK"[All Fields] AND "T"[All Fields] AND "Orbit"[All Fields]
-search2.csv,"Natural"[All Fields] AND "Killer"[All Fields] AND "T"[All Fields] AND "ocular"[All Fields]
-search3.csv,"Natural Killer"[All Fields] AND "T"[All Fields] AND "Orbit"[All Fields]
-search4.csv,"Natural Killer"[All Fields] AND "T"[All Fields] AND "Lymphoma"[All Fields] AND "Orbit"[All Fields]
+search1.csv,"NK[All Fields] AND ""T""[All Fields] AND ""Orbit""[All Fields]"
+search2.csv,"Natural[All Fields] AND ""Killer""[All Fields] AND ""T""[All Fields] AND ""ocular""[All Fields]"
+search3.csv,"Natural Killer[All Fields] AND ""T""[All Fields] AND ""Orbit""[All Fields]"
+search4.csv,"Natural Killer[All Fields] AND ""T""[All Fields] AND ""Lymphoma""[All Fields] AND ""Orbit""[All Fields]"
+search5.csv,"""Orbit""[All Fields] AND ""Natural Killer""[All Fields] AND ""Lymphoma""[All Fields]"
+search6.csv,"""Orbit""[All Fields] AND ""Natural Killer""[All Fields] AND ""Lymphoma""[All Fields]"
+search7.csv,"""Lacrimal""[All Fields] AND ""Natural Killer""[All Fields] AND ""Lymphoma""[All Fields]"
+search8.csv,"""Uveal""[All Fields] AND ""Natural Killer""[All Fields] AND ""Lymphoma""[All Fields]"
+search9.csv,"""Conjunctiva""[All Fields] AND ""Natural Killer""[All Fields] AND ""Lymphoma""[All Fields]"
+search10.csv,"""Periorbital""[All Fields] AND ""Natural Killer""[All Fields] AND ""Lymphoma""[All Fields]"
+search11.csv,"""panuveitis""[All Fields] AND ""NK/T"" AND  ""Lymphoma""[All Fields]"
+search12.csv,"""uveitis"" AND ""killer/T"" AND  ""Lymphoma"""
+search13.csv,"""orbital"" AND ""killer/T"" AND ""lymphoma"""
+search14.csv,"""orbital"" AND ""NK/T"" AND ""lymphoma"""

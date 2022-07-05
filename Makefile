@@ -14,6 +14,7 @@ setup:
 
 merge-searches:
 	./src/MergeSearches.R
+	./src/IntegrateWithPreviousResults.R
 
 run:
 	mkdir -p ./calc/log
