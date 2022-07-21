@@ -34,7 +34,9 @@ stage.numeric <- sapply(str_match(data$Dx_AnnArborStage, '^([IV]*)')[,1], functi
     return(3)
   } else if (x == 'IV') {
     return(4)
-  } else{ 
+  } else if (x == '') {
+    return(NA)
+  } else {
     stop('Invalid Ann Arbor Stage provided in column "AnnArborStageInferred"')
   }
 }, USE.NAMES=FALSE)
@@ -43,9 +45,11 @@ data$Dx_AnnArborStageNumeric <- stage.numeric
 data$Dx_IsLateStage <- stage.numeric >= 3
 
 data$status <- (!str_starts(data$Surv_TimeMonths, ">"))
+data$Surv_TimeMonths[data$Surv_TimeMonths == ''] <- NA
 data$time <- data$Surv_TimeMonths %>%
   str_replace(">", "") %>%
-  as.integer()
+  str_replace("<", "") %>%
+  as.numeric()
 
 data$Demo_IsAdvancedAge <- as.numeric(data$Demo_Age) > 65
 data$Demo_IsMale <- ifelse(data$Demo_Sex == 'M', 1, 0)

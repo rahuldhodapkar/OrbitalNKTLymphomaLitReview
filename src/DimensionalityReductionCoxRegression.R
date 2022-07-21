@@ -351,14 +351,14 @@ puddlr.obj <- CreatePuddlrObject(meta.data$time, data.matrix)
 puddlr.obj <- NormalizePredictors(puddlr.obj)
 puddlr.obj <- RunPCA(puddlr.obj)
 
-k.cross <- 7
+k.cross <- 10
 rand.seed <- 42
 reduction <- 'pca'
 
 avg.train.rsq <- c()
 avg.rmse <- c()
 
-for (n.components in 2:15) {
+for (n.components in 2:20) {
   print(paste0("Testing with [", 
                as.character(n.components) ,"] components"))
   folds <- cut(sample(1:length(puddlr.obj$response)),breaks=k.cross,labels=FALSE)
@@ -438,7 +438,7 @@ ggsave('./fig/dimreduc/rms_martingale_plot.png', width=8, height=4)
 ## PCA and Cox Regression
 ################################################################################
 
-n.components <- 6
+n.components <- 10
 
 cox.df <- as.data.frame(puddlr.obj$reductions$pca$embedding[,1:n.components])
 cox.df$time <- meta.data[rownames(cox.df), 'time']

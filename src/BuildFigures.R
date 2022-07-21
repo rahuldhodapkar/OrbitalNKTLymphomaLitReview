@@ -127,7 +127,8 @@ print('===== END Model 4 =====')
 
 print('===== BEGIN Model 5 =====')
 
-# no sx significant after stratification for ann arbor staging
+# no ptosis significantly negative association after
+# stratificiation by ann arbor stage
 res.cox <- coxph(
   formula=Surv(time, status) ~ 
     strata(Dx_AnnArborStageNumeric >= 3) +
@@ -169,6 +170,7 @@ print('===== END Model 6 =====')
 
 print('===== BEGIN Model 7 =====')
 
+# no ptosis + radiotherapy are significant
 res.cox <- coxph(
   formula=Surv(time, status) ~
     strata(Dx_AnnArborStageNumeric >= 3) +
@@ -395,14 +397,12 @@ km.plots[[1]] + background_grid()
 
 survfit(Surv(time, status) ~ Tx_Chemotherapy_CHOP, data = data) 
 
-
 res.cox <- coxph(
   formula=Surv(time, status) ~
-    Tx_Chemotherapy_CHOP,
+    Tx_Chemotherapy_L_Asp,
   data = data,
   method = 'exact')
 summary(res.cox)
-
 
 
 
