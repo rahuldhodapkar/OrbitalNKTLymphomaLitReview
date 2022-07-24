@@ -23,6 +23,31 @@ s <- ifelse(!dir.exists("./calc"), dir.create("./calc"), FALSE)
 s <- ifelse(!dir.exists("./calc/general"), dir.create("./calc/general"), FALSE)
 
 ################################################################################
+## Generate Screening Statistics
+################################################################################
+
+search.metadata <- read.csv2('./data/search_metadata.csv', quote='', sep=',')
+
+search.data <- NULL
+for (fn in search.metadata$filename) {
+  x <- read.csv(paste0('./data/searches/', fn))
+  
+  if (is.null(search.data)) {
+    search.data <- x
+  } else {
+    search.data <- rbind(search.data,x)
+  }
+}
+
+dedup.data <- read.csv('./data/deduplicated_searches.csv')
+
+print(paste0("Initial Search Results: ", dim(search.data)[[1]]))
+print(paste0("Duplicate Records Removed: ", 
+             nrow(search.data) - nrow(dedup.data)))
+
+table(dedup.data$ExclusionReason)
+
+################################################################################
 ## Run Cox Proportional Hazards Regression
 ################################################################################
 
@@ -49,10 +74,11 @@ km.plots <- ggsurvplot(
 
 km.plots[[1]] + background_grid()
 
+data$Dx_IsLateStage <- factor(data$Dx_IsLateStage, levels=c(TRUE, FALSE), ordered=T)
 
 # plot survival by Ann Arbor Stage
 km.plots <- ggsurvplot(
-  fit = surv_fit(Surv(time, status) ~ Dx_AnnArborStageNumeric >= 3, data=data),
+  fit = surv_fit(Surv(time, status) ~ Dx_IsLateStage, data=data),
   xlab = "Months",
   xlim = c(1,23),
   break.x.by = 3,
@@ -60,9 +86,30 @@ km.plots <- ggsurvplot(
   risk.table=TRUE,
   conf.int=FALSE,
   pval=TRUE,
-  pval.method=TRUE)
+  pval.method=TRUE,
+  palette='npg')
 
 km.plots[[1]] + background_grid()
+ggsave('./fig/general/ann_arbor_kaplan_meier_labeled.png', width=8, height=8)
+
+# plot for manuscript
+km.plots <- ggsurvplot(
+  fit = surv_fit(Surv(time, status) ~ Dx_IsLateStage, data=data),
+  xlab = "Months",
+  xlim = c(1,23),
+  break.x.by = 3,
+  ylab = "Overall Survival Probability",
+  risk.table=FALSE,
+  conf.int=FALSE,
+  pval=FALSE,
+  pval.method=FALSE,
+  palette='npg')
+
+km.plots[[1]] + background_grid()
+ggsave('./fig/general/ann_arbor_kaplan_meier_unlabeled.png', width=8, height=8)
+
+survfit(Surv(time, status) ~ Dx_AnnArborStageNumeric >= 3, data = data) 
+
 
 
 print('===== BEGIN Model 1 =====')
@@ -266,6 +313,13 @@ survfit(Surv(time, status) ~ 1, data = data)
 mean(data$time, na.rm=T)
 sd(data$time, na.rm=T)
 
+# misdiagnosis portions
+sum(data$Dx_Misdiagnosis_InitialDiagnosisCellulitis == 'YES')
+sum(data$Dx_Misdiagnosis_InitialDiagnosisPseudotumor == 'YES')
+sum(data$Dx_Misdiagnosis_InitialDiagnosisSinusitis == 'YES')
+sum(data$Dx_Misdiagnosis_InitialDiagnosisUveitis == 'YES')
+sum(data$Dx_Misdiagnosis_TimeToDiagnosis == 'Postmortem') +
+  sum(as.numeric(data$Dx_Misdiagnosis_TimeToDiagnosis) > 3, na.rm=T)
 
 # Age
 sum(data$Demo_Age < 40)
@@ -275,9 +329,31 @@ sum(data$Demo_Age >= 65)
 mean(data$Demo_Age)
 sd(data$Demo_Age)
 
+# test if male age of onset different from female age of onset
 t.test(data$Demo_Age[data$Demo_Sex == 'M'],
        data$Demo_Age[data$Demo_Sex == 'F'])
 
+# test if number of males > number of females.
+binom.test(x=sum(data$Demo_Sex == 'M'), n=nrow(data), p=.5)
+
+# Sex
+table(data$Demo_Sex)
+table(data$Demo_Sex) / sum(table(data$Demo_Sex))
+
+# Geographic Location
+table(data$Meta_ReportGeographicLocation)
+
+# AAS
+table(data$Dx_AnnArborStageNumeric)
+table(data$Dx_AnnArborStageNumeric) / table(data$Dx_AnnArborStageNumeric) %>% sum()
+
+# Ki-67
+sum(data$Dx_IHC_Ki67 < 0.5, na.rm=T)
+sum(data$Dx_IHC_Ki67 >= 0.5 & data$Dx_IHC_Ki67 < 0.8, na.rm=T)
+sum(data$Dx_IHC_Ki67 >= 0.8, na.rm=T)
+
+
+# Collected Features
 for (c in colnames(data)[str_detect(colnames(data), '^Sx')]) {
   print(paste0('===== BEGIN ', c, ' ====='))
   print(table(data[,c]))
@@ -313,11 +389,17 @@ for (i in 1:nrow(ihc.data)) {
   }
 }
 
-table(data$Dx_AnnArborStageNumeric)
+# number of pts with at least partial immunophenotyping
+sum(rowSums(ihc.data[,1:17] != '') > 0)
 
-sum(data$Dx_IHC_Ki67 < 0.5, na.rm=T)
-sum(data$Dx_IHC_Ki67 >= 0.5 & data$Dx_IHC_Ki67 < 0.8, na.rm=T)
-sum(data$Dx_IHC_Ki67 >= 0.8, na.rm=T)
+for (c in ihc.cols) {
+  print(paste0('===== BEGIN ', c, ' ====='))
+  print(table(ihc.data[,c]))
+  print(table(ihc.data[,c]) / sum(!(ihc.data[,c] == '')))
+  print(96 -  sum(ihc.data[,c] == ''))
+  print( (96 -  sum(ihc.data[,c] == '')) / 96 )
+  print(paste0('===== END ', c, ' ====='))
+}
 
 
 for (c in colnames(data)[str_detect(colnames(data), '^Tx_Surgical')]) {

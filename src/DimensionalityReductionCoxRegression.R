@@ -13,6 +13,7 @@ library(viridis)
 library(cowplot)
 library(ggrepel)
 library(RColorBrewer)
+library(ggnewscale)
 
 ######## Create output scaffolding
 s <- ifelse(!dir.exists("./fig"), dir.create("./fig"), FALSE)
@@ -485,14 +486,25 @@ stats.df$Hi95CI <- exp(stats.df$GLMEstimate + 1.96 * stats.df$StdErr)
 
 write.csv(stats.df, './calc/dimreduc/constrained_cox_model.csv', row.names=F)
 
-# create volcano plot
+# create color map for segments
+paired.pal <- brewer.pal(n=8,name='Paired')
 
+# create volcano plot
 plot.df <- stats.df
 plot.df <- plot.df[order(plot.df$PValue, decreasing = FALSE),]
 plot.df$VariableName <- factor(plot.df$VariableName,
                                levels=plot.df$VariableName,
                                ordered=T)
 plot.df$NegLog10P <- -log10(plot.df$PValue)
+plot.df$VariableSegment <- str_match(plot.df$VariableName, '([A-Za-z]+)_')[,2]
+plot.df$VariableSegment <- factor(plot.df$VariableSegment,
+                                  levels=c('Sx', 'Loc', 'Dx', 'Tx'),
+                                  ordered = T)
+
+callout.colors <- paired.pal[1:4 * 2]
+names(callout.colors) <- c('Sx', 'Loc', 'Dx', 'Tx')
+grey.colors <- paired.pal[1:4 * 2 - 1]
+names(grey.colors) <- c('Sx', 'Loc', 'Dx', 'Tx')
 
 callout.df <- plot.df[plot.df$PValue < 0.05,]
 grey.df <- plot.df[! (plot.df$VariableName %in% callout.df$VariableName),]
@@ -501,7 +513,7 @@ ggplot(grey.df,
        aes(x=log2(exp(GLMEstimate)), y=NegLog10P, label=VariableName)) +
   geom_point(color='#CCCCCC') +
   geom_hline(yintercept = -log10(0.05), linetype='dashed') +
-  geom_point(data = callout.df, color='#F8766D') +
+  geom_point(data = callout.df, color='#F8766D', size=4) +
   geom_text_repel(max.overlaps = Inf,
                   nudge_x = ifelse(callout.df$GLMEstimate > 0,  4, -4),
                   nudge_y = 1,
@@ -521,11 +533,12 @@ ggplot(grey.df,
        aes(x=log2(exp(GLMEstimate)), y=NegLog10P, label=VariableName)) +
   geom_point(color='#CCCCCC') +
   geom_hline(yintercept = -log10(0.05), linetype='dashed') +
-  geom_point(data = callout.df, color='#F8766D') +
+  geom_point(data = callout.df, fill='#F8766D', 
+             size=4, shape=21, stroke=1.15) +
   xlab('Log2(Hazard Ratio)') +
   ylab('-Log10(P Value)') +
   ylim(0, 6) +
-  xlim(-0.75, 0.75) +
+  xlim(-0.5, 0.5) +
   geom_hline(yintercept=0) + geom_vline(xintercept=0) +
   theme_minimal_grid()
 
